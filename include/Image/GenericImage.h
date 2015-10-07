@@ -43,13 +43,21 @@
 using namespace std;
 
 /*!
- *  \brief GenericImage<PixelType> class.
- *  
- *  Class GenericImage<PixelType> provides general-purpose generic interface for storing
- *  and processing different image types. 
+  \brief Class GenericImage<PixelType> provides general-purpose generic interface for storing
+  and processing different image types. 
+   
+  The main goal of the GenericImage<PixelType> is to provide generic, fast and as compile-time type safe
+  as it could be interface for storing and processing different data which can be represented as 
+  matrix of N-dimensions vectors.
+  
+  GenericImage<PixelType> provides dynamicaly allocated storage with static compile-time checks to
+  ensure that all operations are type-safe (as much as possible).
+  
+  It uses no overhead in storing complicated data-types and provides simple iterator-like interface
+  for accessing underlying data.
  
-  Before speaking about in-memory-representation let's define some things:
-  1. Image consists of Pixels.
+  Before speaking about in-memory representation let's define some things:
+  1. Image is a set of Pixels.
   2. Pixel is a set of the fixed amount of the fixed-sized Plants.
   3. Plant is a fixed-sized storage for any data-type.
   4. Size of the Plant in bits should be divisible by 8 (integer amount of bytes).
@@ -64,11 +72,15 @@ using namespace std;
   The only restriction is the Size of the Plant. For example if you need less than a byte to hold
   value(i.e. binary image) you need to use the smallest sized plant - 1 byte plant.
   
+  All needed memory allocated dynamicaly and in one piece. Images' in-memory representation is linear 
+  row-based set of pixels. So, provided X and Y as coordinates of some pixel in the Image the desired
+  location would be Y * Width * sizeof(Pixel) + X.
   
+  The internal representaion of the underlying iterator is simple pointer to some location in the Image memory,
+  so using iterators for a linear access shows no overhead.
   
-  
-   
- |Pixel 1-1|Pixel 1-2| ... |Pixel N-M|
+  Random access is a little slower but still pretty fast (just because we need to compute Y * Width * sizeof(Pixel) + X 
+  every time).
  */
  
 template<typename Pixel>
