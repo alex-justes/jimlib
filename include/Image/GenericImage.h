@@ -23,6 +23,16 @@
  *  https://github.com/alex-justes/jimlib
  */
 
+/*!
+ *  \file
+ *  \brief GenericImage<PixelType> class specification.
+ *  \author Alexey Titov
+ *  \date September 2015
+ *  \copyright zlib
+ *  
+ *  Full specification of the GenericImage<PixelType> class and underlying iterator.
+ */
+
 #ifndef GENERICIMAGE_H
 #define GENERICIMAGE_H
 #include <cassert>
@@ -32,6 +42,35 @@
 
 using namespace std;
 
+/*!
+ *  \brief GenericImage<PixelType> class.
+ *  
+ *  Class GenericImage<PixelType> provides general-purpose generic interface for storing
+ *  and processing different image types. 
+ 
+  Before speaking about in-memory-representation let's define some things:
+  1. Image consists of Pixels.
+  2. Pixel is a set of the fixed amount of the fixed-sized Plants.
+  3. Plant is a fixed-sized storage for any data-type.
+  4. Size of the Plant in bits should be divisible by 8 (integer amount of bytes).
+  
+  For example RGB24 pixel has 3 plants: R, G, B, each plant occupies 8 bits.
+  
+  Those definitions are not limiting you to use it only for image types:
+  Consider you need to hold some complicated data in the matrix form, i.e. vectors with N dimensions.
+  You can define Plant as a dimension of the vector(dimension could be any type, i.e. double or 
+  any abstract type), so Pixel would hold the entire vector(N dimensions).
+  
+  The only restriction is the Size of the Plant. For example if you need less than a byte to hold
+  value(i.e. binary image) you need to use the smallest sized plant - 1 byte plant.
+  
+  
+  
+  
+   
+ |Pixel 1-1|Pixel 1-2| ... |Pixel N-M|
+ */
+ 
 template<typename Pixel>
 class GenericImage
 {
@@ -67,7 +106,7 @@ public:
     const iterator GetRow(uint32_t Row) const;
     const iterator GetColRow(uint32_t Col, uint32_t Row) const;
 protected:
-    void Copy(const GenericImage<Pixel> &Src);
+    void CopyInternal(const GenericImage<Pixel> &Src);
     void AllocateRawData(uint32_t Width, uint32_t Height);
     void DeleteRawData();
     const uint32_t m_SizeOfPixel;
@@ -122,7 +161,7 @@ void GenericImage<Pixel>::Create(uint32_t Width, uint32_t Height, const Pixel &V
     }
 }
 template <typename Pixel>
-void GenericImage<Pixel>::Copy(const GenericImage<Pixel> &Src)
+void GenericImage<Pixel>::CopyInternal(const GenericImage<Pixel> &Src)
 {
     Create(Src.GetWidth(), Src.GetHeight());
     memcpy(Src.m_RawData, m_RawData, m_BufSize);

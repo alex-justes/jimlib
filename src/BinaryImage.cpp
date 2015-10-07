@@ -28,6 +28,11 @@
 #include <cmath>
 #include <cstring>
 
+void BinaryImage::Copy(const BinaryImage &Src)
+{
+    CopyInternal(Src);
+}
+
 void BinaryImage::Threshold(const GrayImage &Src, uint8_t Threshold)
 {
     uint32_t W = Src.GetWidth();

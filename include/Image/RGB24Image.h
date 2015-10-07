@@ -23,33 +23,15 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef GRAYIMAGE_H
-#define GRAYIMAGE_H
+#ifndef RGB24IMAGE_H
+#define RGB24IMAGE_H
 
 #include "GenericImage.h"
 #include "PixelTypes.h"
-#include "Utils/CheckTypes.h"
 
-class GrayImage : public GenericImage<PixelType::Mono8>
+class RGB24Image : public GenericImage<PixelType::RGB24>
 {
-public:
-    template<typename Pixel>
-    void Convert(const GenericImage<Pixel> &RGB24Image);
-    void Copy(const GrayImage &Src);
+    void Copy(const RGB24Image &Src);
 };
 
-template<typename Pixel>
-void GrayImage::Convert(const GenericImage<Pixel> &RGB24Image)
-{
-    static_assert(CheckTypes<Pixel, PixelType::RGB24>::areSame || CheckTypes<Pixel, PixelType::RGBA32>::areSame,
-                  "GrayImage.Convert allow only RGB24 or RGBA32 images");
-    Create(RGB24Image.GetWidth(), RGB24Image.GetHeight());
-    GenericImage<PixelType::RGB24>::iterator it_src = RGB24Image.begin();
-    GrayImage::iterator it_dst = begin();
-    for (; it_src != RGB24Image.end(); ++it_src, ++it_dst)
-    {
-        it_dst[0] = (6969 * it_src[0] + 23434 * it_src[1] + 2365 * it_src[2])/32768;
-    }
-}
-
-#endif //GRAYIMAGE_H
+#endif //RGB24IMAGE_H

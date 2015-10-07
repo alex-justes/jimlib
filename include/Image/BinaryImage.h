@@ -38,6 +38,7 @@ public:
     void Otsu(const GrayImage &Src);
     void Niblack(const GrayImage &Src, uint32_t WindowSize, double K);
     void Threshold(const GrayImage &Src, uint8_t Threshold);
+    void Copy(const BinaryImage &Src);
 };
 
 #endif //BINARYIMAGE_H

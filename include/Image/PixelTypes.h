@@ -32,12 +32,14 @@ using namespace std;
 
 namespace PixelMode
 {
-    const uint8_t Mono8  = 0;
-    const uint8_t Mono16 = 1;
-    const uint8_t Mono32 = 2;
-    const uint8_t Mono64 = 3;
-    const uint8_t RGB24  = 4;
-    const uint8_t RGBA32 = 5;
+    const uint8_t None   = 0;
+    const uint8_t Mono8  = 1;
+    const uint8_t Gray   = Mono8;
+    const uint8_t Mono16 = 2;
+    const uint8_t Mono32 = 3;
+    const uint8_t Mono64 = 4;
+    const uint8_t RGB24  = 5;
+    const uint8_t RGBA32 = 6;
 }
 namespace PixelType
 {
