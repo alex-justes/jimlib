@@ -37,6 +37,7 @@
 #define GENERICIMAGE_H
 #include <cassert>
 #include <cstdint>
+#include <cstring>
 #include "Utils/CheckTypes.h"
 #include "GenericPixel.h"
 
@@ -118,7 +119,8 @@ public:
     const iterator GetRow(uint32_t Row) const;
     const iterator GetColRow(uint32_t Col, uint32_t Row) const;
 protected:
-    void CopyInternal(const GenericImage<Pixel> &Src);
+    void CopyToInternal(GenericImage<Pixel> &Dst) const;
+    void CopyFromInternal(const GenericImage<Pixel> &Src);
     void AllocateRawData(uint32_t Width, uint32_t Height);
     void DeleteRawData();
     const uint32_t m_SizeOfPixel;
@@ -173,10 +175,16 @@ void GenericImage<Pixel>::Create(uint32_t Width, uint32_t Height, const Pixel &V
     }
 }
 template <typename Pixel>
-void GenericImage<Pixel>::CopyInternal(const GenericImage<Pixel> &Src)
+void GenericImage<Pixel>::CopyToInternal(GenericImage<Pixel> &Dst) const
+{
+    Dst.Create(GetWidth(), GetHeight());
+    memcpy(Dst.m_RawData, m_RawData, m_BufSize);
+}
+template <typename Pixel>
+void GenericImage<Pixel>::CopyFromInternal(const GenericImage<Pixel> &Src)
 {
     Create(Src.GetWidth(), Src.GetHeight());
-    memcpy(Src.m_RawData, m_RawData, m_BufSize);
+    memcpy(m_RawData, Src.m_RawData, m_BufSize);
 }
 template <typename Pixel>
 void GenericImage<Pixel>::AllocateRawData(uint32_t Width, uint32_t Height)

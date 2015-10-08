@@ -26,6 +26,7 @@
 #ifndef GENERICPIXEL_H
 #define GENERICPIXEL_H
 #include <cstdint>
+#include <cassert>
 
 using namespace std;
 
@@ -33,11 +34,27 @@ template<typename T, uint8_t PlantsAmount>
 class GenericPixel
 {
 public:
-    virtual T &operator[](uint8_t Plant) = 0;
-    virtual const T &operator[](uint8_t Plant) const = 0;
+    T &operator[](uint8_t Plant);
+    const T &operator[](uint8_t Plant) const;
     static const uint8_t Plants = PlantsAmount;
     typedef T Type;
     typedef GenericPixel<T, PlantsAmount> ParentType;
+protected:
+    T m_Value[PlantsAmount];
 };
+
+template<typename T, uint8_t PlantsAmount>
+T &GenericPixel<T, PlantsAmount>::operator[](uint8_t Plant)
+{
+    assert(Plant < Plants);
+    return m_Value[Plant];
+}
+
+template<typename T, uint8_t PlantsAmount>
+const T &GenericPixel<T, PlantsAmount>::operator[](uint8_t Plant) const
+{
+    assert(Plant < Plants);
+    return m_Value[Plant];
+}
 
 #endif //GENERICPIXEL_H

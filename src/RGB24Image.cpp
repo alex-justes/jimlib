@@ -25,7 +25,11 @@
 
 #include "Image/RGB24Image.h"
 
-void RGB24Image::Copy(const RGB24Image &Src)
+void RGB24Image::CopyFrom(const RGB24Image &Src)
 {
-    CopyInternal(Src);
+    CopyFromInternal(Src);
+}
+void RGB24Image::CopyTo(RGB24Image &Dst) const
+{
+    CopyToInternal(Dst);
 }

@@ -25,7 +25,11 @@
 
 #include "Image/GrayImage.h"
 
-void GrayImage::Copy(const GrayImage &Src)
+void GrayImage::CopyFrom(const GrayImage &Src)
 {
-    CopyInternal(Src);
+    CopyFromInternal(Src);
+}
+void GrayImage::CopyTo(GrayImage &Dst) const
+{
+    CopyToInternal(Dst);
 }

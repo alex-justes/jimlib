@@ -25,7 +25,11 @@
 
 #include "Image/RGBA32Image.h"
 
-void RGBA32Image::Copy(const RGBA32Image &Src)
+void RGBA32Image::CopyFrom(const RGBA32Image &Src)
 {
-    CopyInternal(Src);
+    CopyFromInternal(Src);
+}
+void RGBA32Image::CopyTo(RGBA32Image &Dst) const
+{
+    CopyToInternal(Dst);
 }

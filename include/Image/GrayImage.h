@@ -35,7 +35,8 @@ class GrayImage : public GenericImage<PixelType::Mono8>
 public:
     template<typename Pixel>
     void Convert(const GenericImage<Pixel> &RGB24Image);
-    void Copy(const GrayImage &Src);
+    void CopyFrom(const GrayImage &Src);
+    void CopyTo(GrayImage &Dst) const;
 };
 
 template<typename Pixel>

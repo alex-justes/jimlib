@@ -49,9 +49,7 @@ namespace PixelType
         Mono8();
         Mono8(uint8_t Value);
         Mono8(const Mono8 &Pixel);
-        virtual uint8_t &operator[] (uint8_t Plant) override;
-        virtual const uint8_t &operator[] (uint8_t Plant) const override;
-        uint8_t Value;
+        uint8_t &Value;
     };
 
     class Mono16 : public GenericPixel<uint16_t, 1>
@@ -60,9 +58,7 @@ namespace PixelType
         Mono16();
         Mono16(uint16_t Value);
         Mono16(const Mono16 &Pixel);
-        virtual uint16_t &operator[] (uint8_t Plant) override;
-        virtual const uint16_t &operator[] (uint8_t Plant) const override;
-        uint16_t Value;
+        uint16_t &Value;
     };
 
     class Mono32 : public GenericPixel<uint32_t, 1>
@@ -71,9 +67,7 @@ namespace PixelType
         Mono32();
         Mono32(uint32_t Value);
         Mono32(const Mono32 &Pixel);
-        virtual uint32_t &operator[] (uint8_t Plant) override;
-        virtual const uint32_t &operator[] (uint8_t Plant) const override;
-        uint32_t Value;
+        uint32_t &Value;
     };
 
     class Mono64 : public GenericPixel<uint64_t, 1>
@@ -82,9 +76,7 @@ namespace PixelType
         Mono64();
         Mono64(uint64_t Value);
         Mono64(const Mono64 &Pixel);
-        virtual uint64_t &operator[] (uint8_t Plant) override;
-        virtual const uint64_t &operator[] (uint8_t Plant) const override;
-        uint64_t Value;
+        uint64_t &Value;
     };
 
     class RGB24 : public GenericPixel<uint8_t, 3>
@@ -93,13 +85,9 @@ namespace PixelType
         RGB24();
         RGB24(uint8_t R, uint8_t G, uint8_t B);
         RGB24(const RGB24 &Pixel);
-        virtual uint8_t &operator[] (uint8_t Plant) override;
-        virtual const uint8_t &operator[] (uint8_t Plant) const override;
         uint8_t &R;
         uint8_t &G;
         uint8_t &B;
-    private:
-        uint8_t Value[3];
     };
 
     class RGBA32 : public GenericPixel<uint8_t, 4>
@@ -108,14 +96,10 @@ namespace PixelType
         RGBA32();
         RGBA32(uint8_t R, uint8_t G, uint8_t B, uint8_t A);
         RGBA32(const RGBA32 &Pixel);
-        virtual uint8_t &operator[] (uint8_t Plant) override;
-        virtual const uint8_t &operator[] (uint8_t Plant) const override;
         uint8_t &R;
         uint8_t &G;
         uint8_t &B;
         uint8_t &A;
-    private:
-        uint8_t Value[4];
     };
 }
 

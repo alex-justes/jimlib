@@ -31,7 +31,8 @@
 
 class RGBA32Image : public GenericImage<PixelType::RGBA32>
 {
-    void Copy(const RGBA32Image &Src);
+    void CopyFrom(const RGBA32Image &Src);
+    void CopyTo(RGBA32Image &Dst) const;
 };
 
 #endif //RGBA32IMAGE_H

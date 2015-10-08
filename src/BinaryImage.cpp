@@ -28,9 +28,13 @@
 #include <cmath>
 #include <cstring>
 
-void BinaryImage::Copy(const BinaryImage &Src)
+void BinaryImage::CopyFrom(const BinaryImage &Src)
 {
-    CopyInternal(Src);
+    CopyFromInternal(Src);
+}
+void BinaryImage::CopyTo(BinaryImage &Dst) const
+{
+    CopyToInternal(Dst);
 }
 
 void BinaryImage::Threshold(const GrayImage &Src, uint8_t Threshold)
