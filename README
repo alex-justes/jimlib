@@ -1,23 +1,19 @@
 [Description]
-The goal of the jimlib is to provide lightweight platform-independent compile-time safe interface and algorithms for storing 
-and processing different type of images(by image i mean matrix of N-dimensions vectors).
+The goal of the jimlib is to provide lightweight platform-independent compile-time safe interface and algorithms for storing and processing different types of images(by image i mean matrix of N-dimensions vectors).
 
 [Licensing]
 Library is licensed under zlib-license, so feel free to use it, change and contribute to it :)
 
 [Documentation]
-I will use DOxygen style of documentation. But it will take time to document everything i want, so prepare to be
-patient.
+I will use DOxygen style of documentation. But it will take some time to document everything i want, so prepare to be patient.
 
 [History]
-I'am working in the field of the computer vision ang image recognition. So i decided to make lightweight library
-which provides some simple (and maybe not so simple) methods to process image data.
-To simplify the description of the methods i've made some generic image type as underlying representation of images.
+I'am working in the field of the computer vision ang image recognition. So i decided to make lightweight library which provides some simple (and maybe not so simple) methods to process image data.
+To simplify the description of the methods i've made generic image type as underlying representation of images.
 
 [Why not openCV]
 OpenCV is too big and generic :)
-jimlib won't provide as fast, good and tested algorithms and primitives as opencv, but it can be used
-in small applications and for educational purposes.
+jimlib won't provide as fast, good and tested algorithms and primitives as opencv, but it can be used in small applications and for educational purposes.
 
 [Current features]
  * Generic Pixel types
@@ -37,21 +33,14 @@ in small applications and for educational purposes.
  * Projective transormation (and affine)
   
 [Nearest future]
-Right now it is just collection of *.h and *.cpp files which you need to compile manualy. So sometime later i will
-try to provide header-only and static library to simplify inclusion in any project.
+Right now it is just collection of *.h and *.cpp files which you need to compile manualy. So sometime later i will try to provide header-only and static library to simplify inclusion in any project.
 
 [What will never be implemented]
-IO. I don't want to provide any kind of IO actions, because it would force me to stick to some libraries (libpng, libjpeg 
-etc) or write my own "another-new-standard". But i will provide few examples of using libpng and libjpeg to perform IO
-actions.
+IO. I don't want to provide any kind of IO actions, because it would force me to stick to some libraries (libpng, libjpeg etc) or write my own "another-new-standard". But i will provide few examples of using libpng and libjpeg to perform IO actions.
 
 [Compiler]
-Due to neccessity of using pretty old MSVC 10.0 compiler with some projects, so the support of c++11 feautures is 
-incomplete. But later i will try to use them to simplify everything :)
+Due to neccessity of using pretty old MSVC 10.0 compiler with some projects the support of c++11 feautures is incomplete. But later i will try to use them to simplify everything :)
 
 [Author]
 Alexey Titov
 alex.justes@gmail.com
-
-
-
