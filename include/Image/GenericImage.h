@@ -168,7 +168,7 @@ void GenericImage<Pixel>::Create(uint32_t Width, uint32_t Height, const Pixel &V
     typename GenericImage<Pixel>::iterator it = begin();
     for(; it != end(); ++it)
     {
-        for(uint8_t p = 0; p < m_Plants; ++p)
+        for(uint16_t p = 0; p < m_Plants; ++p)
         {
             it[p] = Value[p];
         }
@@ -235,7 +235,7 @@ const Pixel GenericImage<Pixel>::GetPixel(uint32_t x, uint32_t y) const
 {
     Pixel pix;
     typename GenericImage<Pixel>::iterator it = GetColRow(x, y);
-    for(uint8_t p = 0; p < m_Plants; ++p)
+    for(uint16_t p = 0; p < m_Plants; ++p)
     {
         pix[p] = it[p];
     }
@@ -251,7 +251,7 @@ template <typename Pixel>
 void GenericImage<Pixel>::SetPixel(uint32_t x, uint32_t y, const Pixel &Value)
 {
     typename GenericImage<Pixel>::iterator it = GetColRow(x, y);
-    for(uint8_t p = 0; p < m_Plants; ++p)
+    for(uint16_t p = 0; p < m_Plants; ++p)
     {
         it[p] = Value[p];
     }
