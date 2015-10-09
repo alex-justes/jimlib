@@ -23,16 +23,45 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef RGB24IMAGE_H
-#define RGB24IMAGE_H
+#ifndef JIMLIB_RECT_H
+#define JIMLIB_RECT_H
 
-#include "GenericImage.h"
-#include "PixelTypes.h"
+#include <cstdint>
 
-class RGB24Image : public GenericImage<PixelType::RGB24>
+using namespace std;
+
+class Rect
 {
-    void CopyFrom(const RGB24Image &Src);
-    void CopyTo(RGB24Image &Dst) const;
+public:
+    Rect();
+    Rect(int32_t top, int32_t left, int32_t bottom, int32_t right);
+    bool Check(uint32_t W, uint32_t H);
+    int32_t top;
+    int32_t left;
+    int32_t bottom;
+    int32_t right;
 };
 
-#endif //RGB24IMAGE_H
+// =======================================================
+
+Rect::Rect()
+        : top(0),
+          left(0),
+          bottom(0),
+          right(0)
+{ }
+
+Rect::Rect(int32_t _top, int32_t _left, int32_t _bottom, int32_t _right)
+        : top(_top),
+          left(_left),
+          bottom(_bottom),
+          right(_right)
+{ }
+
+bool Rect::Check(uint32_t W, uint32_t H)
+{
+    bool A = left > 0 && right > 0 && top > 0 && bottom > 0;
+    bool B = left < W && right < W && top < H && bottom < H;
+    return (A && B);
+}
+#endif // JIMLIB_RECT_H

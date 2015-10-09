@@ -23,12 +23,11 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef GRAYIMAGE_H
-#define GRAYIMAGE_H
+#ifndef JIMLIB_GRAYIMAGE_H
+#define JIMLIB_GRAYIMAGE_H
 
-#include "GenericImage.h"
-#include "PixelTypes.h"
-#include "Utils/CheckTypes.h"
+#include "Image/GenericImage.hpp"
+#include "Image/PixelTypes.hpp"
 
 class GrayImage : public GenericImage<PixelType::Mono8>
 {
@@ -53,4 +52,15 @@ void GrayImage::Convert(const GenericImage<Pixel> &RGB24Image)
     }
 }
 
-#endif //GRAYIMAGE_H
+// =======================================================
+
+void GrayImage::CopyFrom(const GrayImage &Src)
+{
+    CopyFromInternal(Src);
+}
+void GrayImage::CopyTo(GrayImage &Dst) const
+{
+    CopyToInternal(Dst);
+}
+
+#endif //JIMLIB_GRAYIMAGE_H

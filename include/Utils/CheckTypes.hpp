@@ -23,38 +23,17 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef CLUSTER_H
-#define CLUSTER_H
+#ifndef JIMLIB_CHECKTYPES_H
+#define JIMLIB_CHECKTYPES_H
 
-#include "GenericImage.h"
-#include "PixelTypes.h"
-#include "BinaryImage.h"
-#include <cstdint>
-#include <memory>
-
-class ClusterItem
+template <class A, class B>
+struct CheckTypes
 {
-public:
-    ClusterItem();
-    uint32_t Mass;
-    uint32_t SumX;
-    uint32_t SumY;
-    uint32_t Cx;
-    uint32_t Cy;
-    void CalculateCenter();
+    static const bool areSame = false;
 };
-
-class Cluster : public GenericImage<PixelType::Mono16>
+template <class A>
+struct CheckTypes<A, A>
 {
-public:
-    static const uint32_t MaxIdx = UINT16_MAX;
-    static const uint32_t MaxClusters = UINT16_MAX;
-    uint16_t Clusterize(const BinaryImage &Src);
-    uint16_t GetClustersAmount() const;
-    const ClusterItem &GetCluster(uint16_t idx) const;
-private:
-    ClusterItem m_Clusters[UINT16_MAX];
-    uint16_t m_ClustersAmount;
+    static const bool areSame = true;
 };
-
-#endif //CLUSTER_H
+#endif //JIMLIB_CHECKTYPES_H

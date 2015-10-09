@@ -23,8 +23,9 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef GENERICPIXEL_H
-#define GENERICPIXEL_H
+#ifndef JIMLIB_GENERICPIXEL_H
+#define JIMLIB_GENERICPIXEL_H
+
 #include <cstdint>
 #include <cassert>
 
@@ -43,6 +44,8 @@ protected:
     T m_Value[PlantsAmount];
 };
 
+// =======================================================
+
 template<typename T, uint8_t PlantsAmount>
 T &GenericPixel<T, PlantsAmount>::operator[](uint8_t Plant)
 {
@@ -57,4 +60,4 @@ const T &GenericPixel<T, PlantsAmount>::operator[](uint8_t Plant) const
     return m_Value[Plant];
 }
 
-#endif //GENERICPIXEL_H
+#endif //JIMLIB_GENERICPIXEL_H

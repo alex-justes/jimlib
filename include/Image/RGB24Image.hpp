@@ -23,29 +23,27 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef INTEGRALIMAGE_H
-#define INTEGRALIMAGE_H
+#ifndef JIMLIB_RGB24IMAGE_H
+#define JIMLIB_RGB24IMAGE_H
 
-#include <cstdint>
-#include <cstring>
-#include <cassert>
-#include "GenericImage.h"
-#include "PixelTypes.h"
-#include "Utils/Rect.h"
+#include "Image/GenericImage.hpp"
+#include "Image/PixelTypes.hpp"
 
-using namespace std;
-
-class IntegralImage : public GenericImage<PixelType::Mono64>
+class RGB24Image : public GenericImage<PixelType::RGB24>
 {
-public:
-    void Calculate(const GenericImage<PixelType::Mono8> &Src);
-    void CalculateSquared(const GenericImage<PixelType::Mono8> &Src);
-    uint64_t GetSum(const Rect &rc) const;
-    uint64_t GetSumUnsafe(const Rect &rc) const;
-    uint64_t GetFullSumUnsafe(uint32_t x, uint32_t y) const;
-private:
-    uint64_t GetSum(int32_t x, int32_t y) const;
+    void CopyFrom(const RGB24Image &Src);
+    void CopyTo(RGB24Image &Dst) const;
 };
 
-#endif //INTEGRALIMAGE_H
+// =======================================================
 
+void RGB24Image::CopyFrom(const RGB24Image &Src)
+{
+    CopyFromInternal(Src);
+}
+void RGB24Image::CopyTo(RGB24Image &Dst) const
+{
+    CopyToInternal(Dst);
+}
+
+#endif //JIMLIB_RGB24IMAGE_H

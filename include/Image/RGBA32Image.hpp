@@ -23,11 +23,11 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef RGBA32IMAGE_H
-#define RGBA32IMAGE_H
+#ifndef JIMLIB_RGBA32IMAGE_H
+#define JIMLIB_RGBA32IMAGE_H
 
-#include "GenericImage.h"
-#include "PixelTypes.h"
+#include "Image/GenericImage.hpp"
+#include "Image/PixelTypes.hpp"
 
 class RGBA32Image : public GenericImage<PixelType::RGBA32>
 {
@@ -35,4 +35,14 @@ class RGBA32Image : public GenericImage<PixelType::RGBA32>
     void CopyTo(RGBA32Image &Dst) const;
 };
 
-#endif //RGBA32IMAGE_H
+// =======================================================
+
+void RGBA32Image::CopyFrom(const RGBA32Image &Src)
+{
+    CopyFromInternal(Src);
+}
+void RGBA32Image::CopyTo(RGBA32Image &Dst) const
+{
+    CopyToInternal(Dst);
+}
+#endif //JIMLIB_RGBA32IMAGE_H
