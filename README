@@ -16,6 +16,7 @@ OpenCV is too big and generic :)
 jimlib won't provide as fast, good and tested algorithms and primitives as opencv, but it can be used in small applications and for educational purposes.
 
 [Current features]
+ * Header only lib
  * Generic Pixel types
  * Generic Image types
  * GrayImage conversion
@@ -32,8 +33,8 @@ jimlib won't provide as fast, good and tested algorithms and primitives as openc
  * Haar-like features
  * Projective transormation (and affine)
   
-[Nearest future]
-Right now it is just collection of *.h and *.cpp files which you need to compile manualy. So sometime later i will try to provide header-only and static library to simplify inclusion in any project.
+[Current goal]
+Affine and Projective transformations. Transformations' matrix (to be able to apply same transformations fast).
 
 [What will never be implemented]
 IO. I don't want to provide any kind of IO actions, because it would force me to stick to some libraries (libpng, libjpeg etc) or write my own "another-new-standard". But i will provide few examples of using libpng and libjpeg to perform IO actions.
