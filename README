@@ -25,7 +25,7 @@ jimlib won't provide as fast, good and tested algorithms and primitives as openc
    - Otsu
    - Simple threshold
  * Integral image
- * Fast Gaussian Blur (need some stimpacks still)
+ * Fast Gaussian Blur
  * 2-pass clusterization of the binary image
 
 [Features which will be implemented soon]
