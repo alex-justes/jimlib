@@ -29,7 +29,7 @@
  *  \author Alexey Titov
  *  \date September 2015
  *  \copyright zlib
- *  
+ *
  *  Full specification of the GenericImage<PixelType> class and underlying iterator.
  */
 
@@ -40,7 +40,6 @@
 #include "Utils/CheckTypes.hpp"
 #include "Image/GenericPixel.hpp"
 
-using namespace std;
 
 /*!
  * \brief Class GenericImage<PixelType> provides general-purpose generic interface for storing
@@ -82,7 +81,7 @@ using namespace std;
  * Random access is a little slower but still pretty fast (just because we need to compute Y * Width * sizeof(Pixel) + X
  * every time).
  */
- 
+
 template<typename Pixel>
 class GenericImage
 {
@@ -119,7 +118,7 @@ public:
      * \param[in] Plant Image plant
      * \return Value of the Pixel[Plant]
      */
-    const typename Pixel::Type GetPixel(uint32_t x, uint32_t y, uint8_t Plant) const;
+    typename Pixel::Type GetPixel(uint32_t x, uint32_t y, uint8_t Plant) const;
 
     /*!
      * Set Pixel[Plant] value located at the (x, y)
@@ -136,7 +135,7 @@ public:
      * \param[in] y Y Coordinate
      * \return Pixel value
      */
-    const Pixel GetPixel(uint32_t x, uint32_t y) const;
+    Pixel GetPixel(uint32_t x, uint32_t y) const;
 
     /*!
      * Set Pixel value located at the (x, y)
@@ -175,10 +174,9 @@ public:
         /*!
          * Create iterator and set its' position.
          * \param[in] pRawData Pointer to internal buffer.
-         * \param[in] SizeOfPixel Size of the underlying pixel.
          * \param[in] idx Offset from the start of the buffer.
          */
-        iterator(uint8_t *pRawData, uint32_t SizeOfPixel, uint32_t idx);
+        iterator(uint8_t *pRawData, uint32_t idx);
 
         /*!
          * Move to next pixel.
@@ -214,7 +212,7 @@ public:
          */
         bool operator!=(const iterator &it) const;
     private:
-        uint32_t m_SizeOfPixel; //< Size of the underlying Pixel
+        static const uint32_t m_SizeOfPixel = Pixel::SizeOfPixel; //< Size of the underlying Pixel
         uint8_t * m_RawData; //< Pointer to the current position in the internal buffer.
     };
 
@@ -222,20 +220,20 @@ public:
      * Get iterator pointed to the begining of the Image.
      * \return iterator pointed to the begining of the Image.
      */
-    const iterator begin() const;
+    iterator begin() const;
 
     /*!
      * Get iterator pointed to the end of the Image.
      * \return iterator pointed to the end of the Image.
      */
-    const iterator end() const;
+    iterator end() const;
 
     /*!
      * Get iterator pointed to the begining of the specified row.
      * \param[in] Row Row of the Image.
      * \return iterator pointed to the begining of the specified row.
      */
-    const iterator GetRow(uint32_t Row) const;
+    iterator GetRow(uint32_t Row) const;
 
     /*!
      * Get iterator pointed to the (column, row).
@@ -243,7 +241,7 @@ public:
      * \param[in] Row Row of the Image.
      * \return iterator pointed to the (column, row).
      */
-    const iterator GetColRow(uint32_t Col, uint32_t Row) const;
+    iterator GetColRow(uint32_t Col, uint32_t Row) const;
 protected:
     /*!
      * Resize Dst Image to the current Width and Height, then copy internal buffer to it.
@@ -271,32 +269,33 @@ protected:
      * Frees allocated buffer.
      */
     void DeleteRawData();
-    const uint32_t m_SizeOfPixel; //< Size of Pixel in bytes
-    const uint32_t m_SizeOfPlant; //< Size of Plant in bytes
     uint32_t m_Width; //< Current Width
     uint32_t m_Height; //< Current Height
     uint32_t m_BufSize; //< Current Buffer size
     uint32_t m_Offset; //< Offset to the next row
     uint8_t * m_RawData; //< Image buffer
     const uint8_t m_Plants; //< Amount of plants
+    const uint32_t m_SizeOfPlant; //< Size of Plant in bytes
+    const uint32_t m_SizeOfPixel; //< Size of Pixel in bytes
 };
 
 // =======================================================
 
+
 template <typename Pixel>
 GenericImage<Pixel>::GenericImage()
-: m_Width(0),
-  m_Height(0),
-  m_BufSize(0),
-  m_Offset(0),
-  m_SizeOfPlant(sizeof(typename Pixel::Type)),
-  m_Plants(Pixel::Plants),
-  m_SizeOfPixel(Pixel::Plants * sizeof(typename Pixel::Type)),
-  m_RawData(nullptr)
+        : m_Width(0),
+          m_Height(0),
+          m_BufSize(0),
+          m_Offset(0),
+          m_RawData(nullptr),
+          m_Plants(Pixel::Plants),
+          m_SizeOfPlant(sizeof(typename Pixel::Type)),
+          m_SizeOfPixel(Pixel::Plants * sizeof(typename Pixel::Type))
 {
-    static_assert( CheckTypes<  GenericPixel<typename Pixel::Type, Pixel::Plants>, 
-                                typename Pixel::ParentType >::areSame, 
-                                "Type is not GenericPixel<T, unsigned int Plants>!" );
+    static_assert( CheckTypes<  GenericPixel<typename Pixel::Type, Pixel::Plants>,
+                           typename Pixel::ParentType >::areSame,
+                   "Type is not GenericPixel<T, uint8_t Plants>!" );
 }
 template <typename Pixel>
 GenericImage<Pixel>::~GenericImage()
@@ -318,10 +317,7 @@ void GenericImage<Pixel>::Create(uint32_t Width, uint32_t Height, const Pixel &V
     typename GenericImage<Pixel>::iterator it = begin();
     for(; it != end(); ++it)
     {
-        for(uint16_t p = 0; p < m_Plants; ++p)
-        {
-            it[p] = Value[p];
-        }
+        memcpy(*it, Value.m_Buffer, Value.SizeOfPixel);
     }
 }
 template <typename Pixel>
@@ -375,20 +371,17 @@ unsigned int GenericImage<Pixel>::GetPlants() const
     return m_Plants;
 }
 template <typename Pixel>
-const typename Pixel::Type GenericImage<Pixel>::GetPixel(uint32_t x, uint32_t y, uint8_t Plant) const
+typename Pixel::Type GenericImage<Pixel>::GetPixel(uint32_t x, uint32_t y, uint8_t Plant) const
 {
     assert(Plant < m_Plants);
     return *(reinterpret_cast<typename Pixel::Type *>(m_RawData + y * m_Offset + x * m_SizeOfPixel) + Plant);
 }
 template <typename Pixel>
-const Pixel GenericImage<Pixel>::GetPixel(uint32_t x, uint32_t y) const
+Pixel GenericImage<Pixel>::GetPixel(uint32_t x, uint32_t y) const
 {
     Pixel pix;
     typename GenericImage<Pixel>::iterator it = GetColRow(x, y);
-    for(uint16_t p = 0; p < m_Plants; ++p)
-    {
-        pix[p] = it[p];
-    }
+    memcpy(pix.m_Buffer, *it, pix.SizeOfPixel);
     return pix;
 }
 template <typename Pixel>
@@ -401,46 +394,41 @@ template <typename Pixel>
 void GenericImage<Pixel>::SetPixel(uint32_t x, uint32_t y, const Pixel &Value)
 {
     typename GenericImage<Pixel>::iterator it = GetColRow(x, y);
-    for(uint16_t p = 0; p < m_Plants; ++p)
-    {
-        it[p] = Value[p];
-    }
+    memcpy(*it, Value.m_Buffer, Value.SizeOfPixel);
 }
 template <typename Pixel>
-const typename GenericImage<Pixel>::iterator GenericImage<Pixel>::begin() const
+typename GenericImage<Pixel>::iterator GenericImage<Pixel>::begin() const
 {
-    GenericImage<Pixel>::iterator it(m_RawData, m_SizeOfPixel, 0);
+    GenericImage<Pixel>::iterator it(m_RawData, 0);
     return it;
 }
 template <typename Pixel>
-const typename GenericImage<Pixel>::iterator GenericImage<Pixel>::end() const
+typename GenericImage<Pixel>::iterator GenericImage<Pixel>::end() const
 {
-    GenericImage<Pixel>::iterator it(m_RawData, m_SizeOfPixel, m_BufSize);
+    GenericImage<Pixel>::iterator it(m_RawData, m_BufSize);
     return it;
 }
 template <typename Pixel>
-const typename GenericImage<Pixel>::iterator GenericImage<Pixel>::GetRow(uint32_t Row) const
+typename GenericImage<Pixel>::iterator GenericImage<Pixel>::GetRow(uint32_t Row) const
 {
-    GenericImage<Pixel>::iterator it(m_RawData, m_SizeOfPixel, m_Offset * Row);
+    GenericImage<Pixel>::iterator it(m_RawData, m_Offset * Row);
     return it;
 }
 template <typename Pixel>
-const typename GenericImage<Pixel>::iterator GenericImage<Pixel>::GetColRow(uint32_t Col, uint32_t Row) const
+typename GenericImage<Pixel>::iterator GenericImage<Pixel>::GetColRow(uint32_t Col, uint32_t Row) const
 {
-    GenericImage<Pixel>::iterator it(m_RawData, m_SizeOfPixel, m_Offset * Row + m_SizeOfPixel * Col);
+    GenericImage<Pixel>::iterator it(m_RawData, m_Offset * Row + m_SizeOfPixel * Col);
     return it;
 }
 template <typename Pixel>
 GenericImage<Pixel>::iterator::iterator()
-: m_SizeOfPixel(0),
-  m_RawData(nullptr)
+        :  m_RawData(nullptr)
 {
 
 }
 template <typename Pixel>
-GenericImage<Pixel>::iterator::iterator(uint8_t * pRawData, uint32_t SizeOfPixel, uint32_t idx)
-: m_SizeOfPixel(SizeOfPixel),
-  m_RawData(pRawData)
+GenericImage<Pixel>::iterator::iterator(uint8_t * pRawData, uint32_t idx)
+        :  m_RawData(pRawData)
 {
     assert(m_RawData != nullptr);
     m_RawData += idx;

@@ -30,8 +30,6 @@
 #include "Image/PixelTypes.hpp"
 #include "Utils/Rect.hpp"
 
-using namespace std;
-
 class IntegralImage : public GenericImage<PixelType::Mono64>
 {
 public:

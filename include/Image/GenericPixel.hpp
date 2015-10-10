@@ -29,8 +29,6 @@
 #include <cstdint>
 #include <cassert>
 
-using namespace std;
-
 template<typename T, uint8_t PlantsAmount>
 class GenericPixel
 {
@@ -38,10 +36,10 @@ public:
     T &operator[](uint8_t Plant);
     const T &operator[](uint8_t Plant) const;
     static const uint8_t Plants = PlantsAmount;
+    static const uint32_t SizeOfPixel = sizeof(T) * PlantsAmount;
     typedef T Type;
     typedef GenericPixel<T, PlantsAmount> ParentType;
-protected:
-    T m_Value[PlantsAmount];
+    T m_Buffer[PlantsAmount];
 };
 
 // =======================================================
@@ -50,14 +48,14 @@ template<typename T, uint8_t PlantsAmount>
 T &GenericPixel<T, PlantsAmount>::operator[](uint8_t Plant)
 {
     assert(Plant < Plants);
-    return m_Value[Plant];
+    return m_Buffer[Plant];
 }
 
 template<typename T, uint8_t PlantsAmount>
 const T &GenericPixel<T, PlantsAmount>::operator[](uint8_t Plant) const
 {
     assert(Plant < Plants);
-    return m_Value[Plant];
+    return m_Buffer[Plant];
 }
 
 #endif //JIMLIB_GENERICPIXEL_H

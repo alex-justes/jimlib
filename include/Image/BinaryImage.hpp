@@ -30,8 +30,6 @@
 #include "Image/GrayImage.hpp"
 #include "Image/IntegralImage.hpp"
 
-using namespace std;
-
 class BinaryImage : public GenericImage<PixelType::Mono8>
 {
 public:

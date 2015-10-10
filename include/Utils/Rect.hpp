@@ -28,8 +28,6 @@
 
 #include <cstdint>
 
-using namespace std;
-
 class Rect
 {
 public:
