@@ -14,13 +14,16 @@ class FastGaussianBlur
 public:
     static const uint32_t MaxW = 10000;
     template<uint8_t Passes, typename Pixel>
-    static void Blur(GenericImage<Pixel> *Image, double Sigma);
+    static void Blur(GenericImage<Pixel> &Image, double Sigma);
 private:
     class DoubleSum : public GenericPixel<double, 1> {};
     template<uint8_t Passes>
     static void CalculateBoxSizes(double Sigma, uint32_t (&Sizes)[Passes]);
-    static void HorizontalBlur(const GenericImage<DoubleSum> &Src, GenericImage<DoubleSum> &HSum, uint32_t R);
-    static void VerticalBlur  (const GenericImage<DoubleSum> &Src, GenericImage<DoubleSum> &VSum, uint32_t R);
+
+    template<typename Pixel>
+    static void HorizontalBlur(const GenericImage<Pixel> &Src, GenericImage<Pixel> &HSum, uint32_t R);
+    template<typename Pixel>
+    static void VerticalBlur  (const GenericImage<Pixel> &Src, GenericImage<Pixel> &VSum, uint32_t R);
 };
 
 template<uint8_t Passes>
@@ -40,136 +43,122 @@ void FastGaussianBlur::CalculateBoxSizes(double Sigma, uint32_t (&Sizes)[Passes]
     }
 }
 
-void FastGaussianBlur::HorizontalBlur(const GenericImage<DoubleSum> &Src, GenericImage<DoubleSum> &HSum, uint32_t R)
+template<typename Pixel>
+void FastGaussianBlur::HorizontalBlur(const GenericImage<Pixel> &Src, GenericImage<Pixel> &HSum, uint32_t R)
 {
     uint32_t W = Src.GetWidth();
     uint32_t H = Src.GetHeight();
-    HSum.Create(W, H);
     uint32_t r = (R-1)/2;
-    for (uint32_t y = 0; y < H; ++y)
+
+    for (uint16_t plant = 0; plant < Src.GetPlants(); ++plant)
     {
-        GenericImage<DoubleSum>::iterator it_l = Src.GetRow(y);
-        GenericImage<DoubleSum>::iterator it_r = Src.GetRow(y);
-        GenericImage<DoubleSum>::iterator it_blur = HSum.GetRow(y);
-        double PartialSum = 0;
-        for (uint32_t x = 0; x <= r; ++x, ++it_r)
+        for (uint32_t y = 0; y < H; ++y)
         {
-            PartialSum += it_r[0];
-        }
-        it_blur[0] = PartialSum / R;
-        ++it_blur;
-        for (uint32_t x = r + 1; x <= R - 1; ++x, ++it_r, ++it_blur)
-        {
-            PartialSum += it_r[0];
-            it_blur[0] = PartialSum / R;
-        }
-        for (uint32_t x = R; x < W; ++x, ++it_r, ++it_l, ++it_blur)
-        {
-            PartialSum = PartialSum - it_l[0] + it_r[0];
-            it_blur[0] = PartialSum / R;
-        }
-        for (uint32_t x = W - r; x < W; ++x, ++it_l, ++it_blur)
-        {
-            PartialSum = PartialSum - it_l[0];
-            it_blur[0] = PartialSum / R;
+            typename GenericImage<Pixel>::iterator it_l = Src.GetRow(y);
+            typename GenericImage<Pixel>::iterator it_r = Src.GetRow(y);
+            typename GenericImage<Pixel>::iterator it_blur = HSum.GetRow(y);
+            double PartialSum = 0;
+            for (uint32_t x = 0; x <= r; ++x, ++it_r)
+            {
+                PartialSum += it_r[plant];
+            }
+            it_blur[plant] = PartialSum / R;
+            ++it_blur;
+            for (uint32_t x = r + 1; x <= R - 1; ++x, ++it_r, ++it_blur)
+            {
+                PartialSum += it_r[plant];
+                it_blur[plant] = PartialSum / R;
+            }
+            for (uint32_t x = R; x < W; ++x, ++it_r, ++it_l, ++it_blur)
+            {
+                PartialSum = PartialSum - it_l[plant] + it_r[plant];
+                it_blur[plant] = PartialSum / R;
+            }
+            for (uint32_t x = W - r; x < W; ++x, ++it_l, ++it_blur)
+            {
+                PartialSum = PartialSum - it_l[plant];
+                it_blur[plant] = PartialSum / R;
+            }
         }
     }
 }
 
-void FastGaussianBlur::VerticalBlur(const GenericImage<DoubleSum> &Src, GenericImage<DoubleSum> &VSum, uint32_t R)
+template<typename Pixel>
+void FastGaussianBlur::VerticalBlur(const GenericImage<Pixel> &Src, GenericImage<Pixel> &VSum, uint32_t R)
 {
     uint32_t W = Src.GetWidth();
     uint32_t H = Src.GetHeight();
     assert(W <= MaxW);
-    VSum.Create(W, H);
+
     uint32_t r = (R-1)/2;
     double PartialSum[MaxW];
-    for (uint32_t i = 0; i < W; ++i)
-    {
-        PartialSum[i] = 0;
-    }
 
-    GenericImage<DoubleSum>::iterator it_b = VSum.begin();
-    GenericImage<DoubleSum>::iterator it_d = Src.begin();
-    GenericImage<DoubleSum>::iterator it_u = Src.begin();
-
-    for (uint32_t y = 0; y <= r; ++y)
+    for (uint16_t plant = 0; plant < Src.GetPlants(); ++plant)
     {
-        for (uint32_t x = 0; x < W; ++x, ++it_d)
+        typename GenericImage<Pixel>::iterator it_b = VSum.begin();
+        typename GenericImage<Pixel>::iterator it_d = Src.begin();
+        typename GenericImage<Pixel>::iterator it_u = Src.begin();
+
+        for (uint32_t i = 0; i < W; ++i)
         {
-            PartialSum[x] += it_d[0];
+            PartialSum[i] = 0;
         }
-    }
 
-    for (uint32_t x = 0; x < W; ++x, ++it_b)
-    {
-        it_b[0] = PartialSum[x] / R;
-    }
-
-    for (uint32_t y = r + 1; y <= R - 1; ++y)
-    {
-        for (uint32_t x = 0; x < W; ++x, ++it_d, ++it_b)
+        for (uint32_t y = 0; y <= r; ++y)
         {
-            PartialSum[x] += it_d[0];
-            it_b[0] = PartialSum[x] / R;
+            for (uint32_t x = 0; x < W; ++x, ++it_d)
+            {
+                PartialSum[x] += it_d[plant];
+            }
         }
-    }
 
-    for (uint32_t y = R; y < H; ++y)
-    {
-        for (uint32_t x = 0; x < W; ++x, ++it_d, ++it_u, ++it_b)
+        for (uint32_t x = 0; x < W; ++x, ++it_b)
         {
-            PartialSum[x] = PartialSum[x] - it_u[0] + it_d[0];
-            it_b[0] = PartialSum[x] / R;
+            it_b[plant] = PartialSum[x] / R;
         }
-    }
 
-    for (uint32_t y = H - r; y < H; ++y)
-    {
-        for (uint32_t x = 0; x < W; ++x, ++it_u, ++it_b)
+        for (uint32_t y = r + 1; y <= R - 1; ++y)
         {
-            PartialSum[x] = PartialSum[x] - it_u[0];
-            it_b[0] = PartialSum[x] / R;
+            for (uint32_t x = 0; x < W; ++x, ++it_d, ++it_b)
+            {
+                PartialSum[x] += it_d[plant];
+                it_b[plant] = PartialSum[x] / R;
+            }
+        }
+
+        for (uint32_t y = R; y < H; ++y)
+        {
+            for (uint32_t x = 0; x < W; ++x, ++it_d, ++it_u, ++it_b)
+            {
+                PartialSum[x] = PartialSum[x] - it_u[plant] + it_d[plant];
+                it_b[plant] = PartialSum[x] / R;
+            }
+        }
+
+        for (uint32_t y = H - r; y < H; ++y)
+        {
+            for (uint32_t x = 0; x < W; ++x, ++it_u, ++it_b)
+            {
+                PartialSum[x] = PartialSum[x] - it_u[plant];
+                it_b[plant] = PartialSum[x] / R;
+            }
         }
     }
 }
 
 template<uint8_t Passes, typename Pixel>
-void FastGaussianBlur::Blur(GenericImage<Pixel> *Image, double Sigma)
+void FastGaussianBlur::Blur(GenericImage<Pixel> &Image, double Sigma)
 {
-    GenericImage<DoubleSum> HSum;
-    GenericImage<DoubleSum> VSum;
+    GenericImage<Pixel> HSum;
     uint32_t Sizes[Passes];
-    uint32_t W = Image->GetWidth();
-    uint32_t H = Image->GetHeight();
+    uint32_t W = Image.GetWidth();
+    uint32_t H = Image.GetHeight();
     HSum.Create(W, H);
-    VSum.Create(W, H);
     CalculateBoxSizes(Sigma, Sizes);
-    for (uint16_t plant = 0; plant < Image->GetPlants(); ++plant)
+    for (uint16_t pass = 0; pass < Passes; ++pass)
     {
-        // TODO: Copy is slow, we need to avoid that
-        {
-            GenericImage<DoubleSum>::iterator it_dst = VSum.begin();
-            typename GenericImage<Pixel>::iterator it_src = Image->begin();
-            for (; it_src != Image->end(); ++it_src, ++it_dst)
-            {
-                it_dst[0] = it_src[plant];
-            }
-        }
-        for (uint16_t pass = 0; pass < Passes; ++pass)
-        {
-            HorizontalBlur(VSum, HSum, Sizes[pass]);
-            VerticalBlur  (HSum, VSum, Sizes[pass]);
-        }
-
-        {
-            GenericImage<DoubleSum>::iterator it_src = VSum.begin();
-            typename GenericImage<Pixel>::iterator it_dst = Image->begin();
-            for (; it_dst != Image->end(); ++it_src, ++it_dst)
-            {
-                it_dst[plant] = it_src[0];
-            }
-        }
+        HorizontalBlur(Image, HSum, Sizes[pass]);
+        VerticalBlur  (HSum, Image, Sizes[pass]);
     }
 }
 

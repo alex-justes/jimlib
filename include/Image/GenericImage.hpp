@@ -242,6 +242,9 @@ public:
      * \return iterator pointed to the (column, row).
      */
     iterator GetColRow(uint32_t Col, uint32_t Row) const;
+
+    void CopyTo_Unsafe(GenericImage<Pixel> &Dst) const;
+    void CopyFrom_Unsafe(const GenericImage<Pixel> &Src);
 protected:
     /*!
      * Resize Dst Image to the current Width and Height, then copy internal buffer to it.
@@ -332,6 +335,20 @@ void GenericImage<Pixel>::CopyFromInternal(const GenericImage<Pixel> &Src)
     Create(Src.GetWidth(), Src.GetHeight());
     memcpy(m_RawData, Src.m_RawData, m_BufSize);
 }
+
+template <typename Pixel>
+void GenericImage<Pixel>::CopyTo_Unsafe(GenericImage<Pixel> &Dst) const
+{
+    Dst.Create(GetWidth(), GetHeight());
+    memcpy(Dst.m_RawData, m_RawData, m_BufSize);
+}
+template <typename Pixel>
+void GenericImage<Pixel>::CopyFrom_Unsafe(const GenericImage<Pixel> &Src)
+{
+    Create(Src.GetWidth(), Src.GetHeight());
+    memcpy(m_RawData, Src.m_RawData, m_BufSize);
+}
+
 template <typename Pixel>
 void GenericImage<Pixel>::AllocateRawData(uint32_t Width, uint32_t Height)
 {
