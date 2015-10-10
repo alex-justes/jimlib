@@ -43,6 +43,9 @@ IO. I don't want to provide any kind of IO actions, because it would force me to
 [Compiler]
 Due to neccessity of using pretty old MSVC 10.0 compiler with some projects the support of c++11 feautures is incomplete. But later i will try to use them to simplify everything :)
 
+[g++ Compiler options]
+With this options you can achieve better results: -O3 -ffast-math -funroll-loops -fexpensive-optimizations
+
 [Author]
 Alexey Titov
 alex.justes@gmail.com

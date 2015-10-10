@@ -45,6 +45,8 @@ private:
     static void VerticalBlur(const GenericImage<PixelSrc> &Src, GenericImage<PixelDst> &VSum, uint32_t R);
 };
 
+// =======================================================
+
 template<uint8_t Passes>
 void FastGaussianBlur::CalculateBoxSizes(double Sigma, uint32_t (&Sizes)[Passes])
 {
