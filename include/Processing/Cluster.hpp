@@ -23,8 +23,8 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef JIMLIB_CLUSTER_H
-#define JIMLIB_CLUSTER_H
+#ifndef JIMLIB_CLUSTER_HPP
+#define JIMLIB_CLUSTER_HPP
 
 #include <memory>
 #include "Image/PixelTypes.hpp"
@@ -205,4 +205,4 @@ uint16_t Cluster::Clusterize(const BinaryImage &Src)
 #undef min
 #endif
 
-#endif //JIMLIB_CLUSTER_H
+#endif //JIMLIB_CLUSTER_HPP

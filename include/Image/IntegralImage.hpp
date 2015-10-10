@@ -23,8 +23,8 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef JIMLIB_INTEGRALIMAGE_H
-#define JIMLIB_INTEGRALIMAGE_H
+#ifndef JIMLIB_INTEGRALIMAGE_HPP
+#define JIMLIB_INTEGRALIMAGE_HPP
 
 #include "Image/GenericImage.hpp"
 #include "Image/PixelTypes.hpp"
@@ -129,5 +129,5 @@ void IntegralImage::CalculateSquared(const GenericImage<PixelType::Mono8> &Src)
 }
 
 
-#endif //JIMLIB_INTEGRALIMAGE_H
+#endif //JIMLIB_INTEGRALIMAGE_HPP
 

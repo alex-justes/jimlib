@@ -23,8 +23,8 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef JIMLIB_GRAYIMAGE_H
-#define JIMLIB_GRAYIMAGE_H
+#ifndef JIMLIB_GRAYIMAGE_HPP
+#define JIMLIB_GRAYIMAGE_HPP
 
 #include "Image/GenericImage.hpp"
 #include "Image/PixelTypes.hpp"
@@ -63,4 +63,4 @@ void GrayImage::CopyTo(GrayImage &Dst) const
     CopyToInternal(Dst);
 }
 
-#endif //JIMLIB_GRAYIMAGE_H
+#endif //JIMLIB_GRAYIMAGE_HPP

@@ -33,8 +33,8 @@
  *  Full specification of the GenericImage<PixelType> class and underlying iterator.
  */
 
-#ifndef JIMLIB_GENERICIMAGE_H
-#define JIMLIB_GENERICIMAGE_H
+#ifndef JIMLIB_GENERICIMAGE_HPP
+#define JIMLIB_GENERICIMAGE_HPP
 
 #include <cstring>
 #include "Utils/CheckTypes.hpp"
@@ -470,4 +470,4 @@ typename Pixel::Type &GenericImage<Pixel>::iterator::operator[](uint8_t Plant)
     return reinterpret_cast<typename Pixel::Type *>(m_RawData)[Plant];
 }
 
-#endif //JIMLIB_GENERICIMAGE_H
+#endif //JIMLIB_GENERICIMAGE_HPP

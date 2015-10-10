@@ -23,8 +23,8 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef JIMLIB_BINARYIMAGE_H
-#define JIMLIB_BINARYIMAGE_H
+#ifndef JIMLIB_BINARYIMAGE_HPP
+#define JIMLIB_BINARYIMAGE_HPP
 
 #include <cmath>
 #include "Image/GrayImage.hpp"
@@ -156,4 +156,4 @@ void BinaryImage::Niblack(const GrayImage &Src, uint32_t WindowSize, double K)
     }
 }
 
-#endif //JIMLIB_BINARYIMAGE_H
+#endif //JIMLIB_BINARYIMAGE_HPP

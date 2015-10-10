@@ -23,8 +23,8 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef JIMLIB_RECT_H
-#define JIMLIB_RECT_H
+#ifndef JIMLIB_RECT_HPP
+#define JIMLIB_RECT_HPP
 
 #include <cstdint>
 
@@ -62,4 +62,4 @@ bool Rect::Check(uint32_t W, uint32_t H)
     bool B = left < W && right < W && top < H && bottom < H;
     return (A && B);
 }
-#endif // JIMLIB_RECT_H
+#endif // JIMLIB_RECT_HPP

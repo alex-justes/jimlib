@@ -23,8 +23,8 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef JIMLIB_PIXELTYPES_H
-#define JIMLIB_PIXELTYPES_H
+#ifndef JIMLIB_PIXELTYPES_HPP
+#define JIMLIB_PIXELTYPES_HPP
 
 #include "Image/GenericPixel.hpp"
 
@@ -243,4 +243,4 @@ RGBA32::RGBA32(const RGBA32 &Pixel)
     A = Pixel.A;
 }
 
-#endif //JIMLIB_PIXELTYPES_H
+#endif //JIMLIB_PIXELTYPES_HPP

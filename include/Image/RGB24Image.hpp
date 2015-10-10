@@ -23,8 +23,8 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef JIMLIB_RGB24IMAGE_H
-#define JIMLIB_RGB24IMAGE_H
+#ifndef JIMLIB_RGB24IMAGE_HPP
+#define JIMLIB_RGB24IMAGE_HPP
 
 #include "Image/GenericImage.hpp"
 #include "Image/PixelTypes.hpp"
@@ -46,4 +46,4 @@ void RGB24Image::CopyTo(RGB24Image &Dst) const
     CopyToInternal(Dst);
 }
 
-#endif //JIMLIB_RGB24IMAGE_H
+#endif //JIMLIB_RGB24IMAGE_HPP

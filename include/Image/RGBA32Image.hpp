@@ -23,8 +23,8 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef JIMLIB_RGBA32IMAGE_H
-#define JIMLIB_RGBA32IMAGE_H
+#ifndef JIMLIB_RGBA32IMAGE_HPP
+#define JIMLIB_RGBA32IMAGE_HPP
 
 #include "Image/GenericImage.hpp"
 #include "Image/PixelTypes.hpp"
@@ -45,4 +45,4 @@ void RGBA32Image::CopyTo(RGBA32Image &Dst) const
 {
     CopyToInternal(Dst);
 }
-#endif //JIMLIB_RGBA32IMAGE_H
+#endif //JIMLIB_RGBA32IMAGE_HPP

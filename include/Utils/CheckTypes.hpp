@@ -23,8 +23,8 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef JIMLIB_CHECKTYPES_H
-#define JIMLIB_CHECKTYPES_H
+#ifndef JIMLIB_CHECKTYPES_HPP
+#define JIMLIB_CHECKTYPES_HPP
 
 template <class A, class B>
 struct CheckTypes
@@ -36,4 +36,4 @@ struct CheckTypes<A, A>
 {
     static const bool areSame = true;
 };
-#endif //JIMLIB_CHECKTYPES_H
+#endif //JIMLIB_CHECKTYPES_HPP
