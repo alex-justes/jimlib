@@ -28,22 +28,24 @@
 
 #include "Image/GenericImage.hpp"
 #include "Image/PixelTypes.hpp"
-
-class RGB24Image : public GenericImage<PixelType::RGB24>
+namespace jimlib
 {
-    void CopyFrom(const RGB24Image &Src);
-    void CopyTo(RGB24Image &Dst) const;
-};
+    class RGB24Image : public GenericImage<PixelType::RGB24>
+    {
+        void CopyFrom(const RGB24Image &Src);
+        void CopyTo(RGB24Image &Dst) const;
+    };
 
 // =======================================================
 
-void RGB24Image::CopyFrom(const RGB24Image &Src)
-{
-    CopyFromInternal(Src);
-}
-void RGB24Image::CopyTo(RGB24Image &Dst) const
-{
-    CopyToInternal(Dst);
-}
+    inline void RGB24Image::CopyFrom(const RGB24Image &Src)
+    {
+        CopyFromInternal(Src);
+    }
 
+    inline void RGB24Image::CopyTo(RGB24Image &Dst) const
+    {
+        CopyToInternal(Dst);
+    }
+};
 #endif //JIMLIB_RGB24IMAGE_HPP

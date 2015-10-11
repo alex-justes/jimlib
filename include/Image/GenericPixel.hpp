@@ -28,34 +28,35 @@
 
 #include <cstdint>
 #include <cassert>
-
-template<typename T, uint8_t PlantsAmount>
-class GenericPixel
+namespace jimlib
 {
-public:
-    T &operator[](uint8_t Plant);
-    const T &operator[](uint8_t Plant) const;
-    static const uint8_t Plants = PlantsAmount;
-    static const uint32_t SizeOfPixel = sizeof(T) * PlantsAmount;
-    typedef T Type;
-    typedef GenericPixel<T, PlantsAmount> ParentType;
-    T m_Buffer[PlantsAmount];
-};
+    template<typename T, uint8_t PlantsAmount>
+    class GenericPixel
+    {
+    public:
+        T &operator[](uint8_t Plant);
+        const T &operator[](uint8_t Plant) const;
+        static const uint8_t Plants = PlantsAmount;
+        static const uint32_t SizeOfPixel = sizeof(T) * PlantsAmount;
+        typedef T Type;
+        typedef GenericPixel<T, PlantsAmount> ParentType;
+        T m_Buffer[PlantsAmount];
+    };
 
 // =======================================================
 
-template<typename T, uint8_t PlantsAmount>
-T &GenericPixel<T, PlantsAmount>::operator[](uint8_t Plant)
-{
-    assert(Plant < PlantsAmount);
-    return m_Buffer[Plant];
-}
+    template<typename T, uint8_t PlantsAmount>
+    T &GenericPixel<T, PlantsAmount>::operator[](uint8_t Plant)
+    {
+        assert(Plant < PlantsAmount);
+        return m_Buffer[Plant];
+    }
 
-template<typename T, uint8_t PlantsAmount>
-const T &GenericPixel<T, PlantsAmount>::operator[](uint8_t Plant) const
-{
-    assert(Plant < PlantsAmount);
-    return m_Buffer[Plant];
-}
-
+    template<typename T, uint8_t PlantsAmount>
+    const T &GenericPixel<T, PlantsAmount>::operator[](uint8_t Plant) const
+    {
+        assert(Plant < PlantsAmount);
+        return m_Buffer[Plant];
+    }
+};
 #endif //JIMLIB_GENERICPIXEL_HPP

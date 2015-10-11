@@ -26,8 +26,14 @@
 
 #ifndef JIMLIB_MINMAX_HPP
 #define JIMLIB_MINMAX_HPP
-template<typename T>
-T min(T a, T b) { return (a < b ? a : b); }
-template<typename T>
-T max(T a, T b) { return (a > b ? a : b); }
+namespace jimlib
+{
+    template<typename T>
+    T min(T a, T b)
+    { return (a < b ? a : b); }
+
+    template<typename T>
+    T max(T a, T b)
+    { return (a > b ? a : b); }
+};
 #endif //JIMLIB_MINMAX_HPP

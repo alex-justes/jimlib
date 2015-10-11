@@ -28,21 +28,24 @@
 
 #include "Image/GenericImage.hpp"
 #include "Image/PixelTypes.hpp"
-
-class RGBA32Image : public GenericImage<PixelType::RGBA32>
+namespace jimlib
 {
-    void CopyFrom(const RGBA32Image &Src);
-    void CopyTo(RGBA32Image &Dst) const;
-};
+    class RGBA32Image : public GenericImage<PixelType::RGBA32>
+    {
+        void CopyFrom(const RGBA32Image &Src);
+        void CopyTo(RGBA32Image &Dst) const;
+    };
 
 // =======================================================
 
-void RGBA32Image::CopyFrom(const RGBA32Image &Src)
-{
-    CopyFromInternal(Src);
-}
-void RGBA32Image::CopyTo(RGBA32Image &Dst) const
-{
-    CopyToInternal(Dst);
-}
+    inline void RGBA32Image::CopyFrom(const RGBA32Image &Src)
+    {
+        CopyFromInternal(Src);
+    }
+
+    inline void RGBA32Image::CopyTo(RGBA32Image &Dst) const
+    {
+        CopyToInternal(Dst);
+    }
+};
 #endif //JIMLIB_RGBA32IMAGE_HPP

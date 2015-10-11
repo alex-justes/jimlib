@@ -28,67 +28,74 @@
 
 #include "Image/GenericImage.hpp"
 #include "Image/PixelTypes.hpp"
-
-class GrayImage : public GenericImage<PixelType::Mono8>
+namespace jimlib
 {
-public:
-    template<typename Pixel>
-    void Convert(const GenericImage<Pixel> &RGB24Image);
-    template <typename Pixel>
-    void Convert(const GenericImage<Pixel> &Src, uint8_t Plant);
-    // TODO: Move it to somnething like ImageProcessing class
-    void AdjustColor(double k, double b);
-    void CopyFrom(const GrayImage &Src);
-    void CopyTo(GrayImage &Dst) const;
-};
+    class GrayImage : public GenericImage<PixelType::Mono8>
+    {
+    public:
+        template<typename Pixel>
+        void Convert(const GenericImage<Pixel> &RGB24Image);
+
+        template<typename Pixel>
+        void Convert(const GenericImage<Pixel> &Src, uint8_t Plant);
+
+        // TODO: Move it to somnething like ImageProcessing class
+        void AdjustColor(double k, double b);
+
+        void CopyFrom(const GrayImage &Src);
+
+        void CopyTo(GrayImage &Dst) const;
+    };
 
 // =======================================================
 
-template<typename Pixel>
-void GrayImage::Convert(const GenericImage<Pixel> &RGB24Image)
-{
-    static_assert(CheckTypes<Pixel, PixelType::RGB24>::areSame || CheckTypes<Pixel, PixelType::RGBA32>::areSame,
-                  "GrayImage.Convert allow only RGB24 or RGBA32 images");
-    Create(RGB24Image.GetWidth(), RGB24Image.GetHeight());
-    GenericImage<PixelType::RGB24>::iterator it_src = RGB24Image.begin();
-    GrayImage::iterator it_dst = begin();
-    for (; it_src != RGB24Image.end(); ++it_src, ++it_dst)
+    template<typename Pixel>
+    void GrayImage::Convert(const GenericImage<Pixel> &RGB24Image)
     {
-        it_dst[0] = (6969 * it_src[0] + 23434 * it_src[1] + 2365 * it_src[2])/32768;
+        static_assert(CheckTypes<Pixel, PixelType::RGB24>::areSame || CheckTypes<Pixel, PixelType::RGBA32>::areSame,
+                      "GrayImage.Convert allow only RGB24 or RGBA32 images");
+        Create(RGB24Image.GetWidth(), RGB24Image.GetHeight());
+        GenericImage<PixelType::RGB24>::iterator it_src = RGB24Image.begin();
+        GrayImage::iterator it_dst = begin();
+        for (; it_src != RGB24Image.end(); ++it_src, ++it_dst)
+        {
+            it_dst[0] = (6969 * it_src[0] + 23434 * it_src[1] + 2365 * it_src[2]) / 32768;
+        }
     }
-}
 
-template <typename Pixel>
-void GrayImage::Convert(const GenericImage<Pixel> &Src, uint8_t Plant)
-{
-    assert(Plant < GenericImage<Pixel>::Plants);
-    Create(Src.GetWidth(), Src.GetHeight());
-    typename GenericImage<Pixel>::iterator it_src = Src.begin();
-    GrayImage::iterator it_dst = begin();
-    for (; it_src != Src.end(); ++it_src, ++it_dst)
+    template<typename Pixel>
+    void GrayImage::Convert(const GenericImage<Pixel> &Src, uint8_t Plant)
     {
-        it_dst[0] = it_src[Plant];
+        assert(Plant < GenericImage<Pixel>::Plants);
+        Create(Src.GetWidth(), Src.GetHeight());
+        typename GenericImage<Pixel>::iterator it_src = Src.begin();
+        GrayImage::iterator it_dst = begin();
+        for (; it_src != Src.end(); ++it_src, ++it_dst)
+        {
+            it_dst[0] = it_src[Plant];
+        }
     }
-}
 
-void GrayImage::CopyFrom(const GrayImage &Src)
-{
-    CopyFromInternal(Src);
-}
-void GrayImage::CopyTo(GrayImage &Dst) const
-{
-    CopyToInternal(Dst);
-}
-
-void GrayImage::AdjustColor(double k, double b)
-{
-    GrayImage::iterator it = begin();
-    for(; it != end(); ++it)
+    inline void GrayImage::CopyFrom(const GrayImage &Src)
     {
-        int32_t V = (k*it[0] + b);
-        V = V < 0 ? 0 : V;
-        V = V > 255 ? 255 : V;
-        it[0] = V;
+        CopyFromInternal(Src);
     }
-}
+
+    inline void GrayImage::CopyTo(GrayImage &Dst) const
+    {
+        CopyToInternal(Dst);
+    }
+
+    inline void GrayImage::AdjustColor(double k, double b)
+    {
+        GrayImage::iterator it = begin();
+        for (; it != end(); ++it)
+        {
+            int32_t V = (k * it[0] + b);
+            V = V < 0 ? 0 : V;
+            V = V > 255 ? 255 : V;
+            it[0] = V;
+        }
+    }
+};
 #endif //JIMLIB_GRAYIMAGE_HPP

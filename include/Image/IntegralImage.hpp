@@ -29,105 +29,109 @@
 #include "Image/GenericImage.hpp"
 #include "Image/PixelTypes.hpp"
 #include "Utils/Rect.hpp"
-
-class IntegralImage : public GenericImage<PixelType::Mono64>
+namespace jimlib
 {
-public:
-    void Calculate(const GenericImage<PixelType::Mono8> &Src);
-    void CalculateSquared(const GenericImage<PixelType::Mono8> &Src);
-    uint64_t GetSum(const Rect &rc) const;
-    uint64_t GetSumUnsafe(const Rect &rc) const;
-    uint64_t GetFullSumUnsafe(uint32_t x, uint32_t y) const;
-private:
-    uint64_t GetSum(int32_t x, int32_t y) const;
-};
+    class IntegralImage : public GenericImage<PixelType::Mono64>
+    {
+    public:
+        void Calculate(const GenericImage <PixelType::Mono8> &Src);
+        void CalculateSquared(const GenericImage <PixelType::Mono8> &Src);
+        uint64_t GetSum(const Rect &rc) const;
+        uint64_t GetSumUnsafe(const Rect &rc) const;
+        uint64_t GetFullSumUnsafe(uint32_t x, uint32_t y) const;
+    private:
+        uint64_t GetSum(int32_t x, int32_t y) const;
+    };
 
 // =======================================================
 
-uint64_t IntegralImage::GetSum(int32_t x, int32_t y) const
-{
-    if (x < 0 || y < 0)
-        return 0;
-    x = (x >= GetWidth())  ? (GetWidth() - 1)  : x;
-    y = (y >= GetHeight()) ? (GetHeight() - 1) : y;
-    return GetPixel(x, y, 0);
-}
-uint64_t IntegralImage::GetSum(const Rect &rc) const
-{
-    uint64_t A = GetSum(rc.right, rc.bottom);
-    uint64_t B = GetSum(rc.left - 1, rc.top - 1);
-    uint64_t C = GetSum(rc.right, rc.top - 1);
-    uint64_t D = GetSum(rc.left - 1, rc.bottom);
-    return (A + B - C - D);
-}
-uint64_t IntegralImage::GetSumUnsafe(const Rect &rc) const
-{
-    return (  GetPixel(rc.right, rc.bottom, 0)
-              + GetPixel(rc.left - 1, rc.top - 1, 0)
-              - GetPixel(rc.right, rc.top - 1, 0)
-              - GetPixel(rc.left - 1, rc.bottom, 0)
-    );
-}
-
-uint64_t IntegralImage::GetFullSumUnsafe(uint32_t x, uint32_t y) const
-{
-    return GetPixel(x, y, 0);
-}
-
-void IntegralImage::Calculate(const GenericImage<PixelType::Mono8> &Src)
-{
-    uint32_t W = Src.GetWidth();
-    uint32_t H = Src.GetHeight();
-    Create(W, H);
-    GenericImage<PixelType::Mono8>::iterator it_src = Src.begin();
-    IntegralImage::iterator it_dst = begin();
-    it_dst[0] = it_src[0];
-    ++it_dst;
-    ++it_src;
-    IntegralImage::iterator it_sum = begin();
-    for (uint32_t x = 1; x < W; ++x, ++it_dst, ++it_src, ++it_sum)
+    inline uint64_t IntegralImage::GetSum(int32_t x, int32_t y) const
     {
-        it_dst[0] = it_sum[0] + it_src[0];
+        if (x < 0 || y < 0)
+            return 0;
+        x = (x >= GetWidth()) ? (GetWidth() - 1) : x;
+        y = (y >= GetHeight()) ? (GetHeight() - 1) : y;
+        return GetPixel(x, y, 0);
     }
-    it_sum = begin();
 
-    for (uint32_t y = 1; y < H; ++y)
+    inline uint64_t IntegralImage::GetSum(const Rect &rc) const
     {
-        uint32_t LocalSum = 0;
-        for (uint32_t x = 0; x < W; ++x, ++it_dst, ++it_src, ++it_sum)
+        uint64_t A = GetSum(rc.right, rc.bottom);
+        uint64_t B = GetSum(rc.left - 1, rc.top - 1);
+        uint64_t C = GetSum(rc.right, rc.top - 1);
+        uint64_t D = GetSum(rc.left - 1, rc.bottom);
+        return (A + B - C - D);
+    }
+
+    inline uint64_t IntegralImage::GetSumUnsafe(const Rect &rc) const
+    {
+        return (GetPixel(rc.right, rc.bottom, 0)
+                + GetPixel(rc.left - 1, rc.top - 1, 0)
+                - GetPixel(rc.right, rc.top - 1, 0)
+                - GetPixel(rc.left - 1, rc.bottom, 0)
+        );
+    }
+
+    inline uint64_t IntegralImage::GetFullSumUnsafe(uint32_t x, uint32_t y) const
+    {
+        return GetPixel(x, y, 0);
+    }
+
+    inline void IntegralImage::Calculate(const GenericImage <PixelType::Mono8> &Src)
+    {
+        uint32_t W = Src.GetWidth();
+        uint32_t H = Src.GetHeight();
+        Create(W, H);
+        GenericImage<PixelType::Mono8>::iterator it_src = Src.begin();
+        IntegralImage::iterator it_dst = begin();
+        it_dst[0] = it_src[0];
+        ++it_dst;
+        ++it_src;
+        IntegralImage::iterator it_sum = begin();
+        for (uint32_t x = 1; x < W; ++x, ++it_dst, ++it_src, ++it_sum)
         {
-            LocalSum += it_src[0];
-            it_dst[0] = it_sum[0] + LocalSum;
+            it_dst[0] = it_sum[0] + it_src[0];
+        }
+        it_sum = begin();
+
+        for (uint32_t y = 1; y < H; ++y)
+        {
+            uint32_t LocalSum = 0;
+            for (uint32_t x = 0; x < W; ++x, ++it_dst, ++it_src, ++it_sum)
+            {
+                LocalSum += it_src[0];
+                it_dst[0] = it_sum[0] + LocalSum;
+            }
         }
     }
-}
-void IntegralImage::CalculateSquared(const GenericImage<PixelType::Mono8> &Src)
-{
-    uint32_t W = Src.GetWidth();
-    uint32_t H = Src.GetHeight();
-    Create(W, H);
-    GenericImage<PixelType::Mono8>::iterator it_src = Src.begin();
-    IntegralImage::iterator it_dst = begin();
-    it_dst[0] = it_src[0] * it_src[0];
-    ++it_dst;
-    ++it_src;
-    IntegralImage::iterator it_sum = begin();
-    for (uint32_t x = 1; x < W; ++x, ++it_dst, ++it_src, ++it_sum)
+
+    inline void IntegralImage::CalculateSquared(const GenericImage <PixelType::Mono8> &Src)
     {
-        it_dst[0] = it_sum[0] + it_src[0] * it_src[0];
-    }
-    it_sum = begin();
-    for (uint32_t y = 1; y < H; ++y)
-    {
-        uint32_t LocalSum = 0;
-        for (uint32_t x = 0; x < W; ++x, ++it_dst, ++it_src, ++it_sum)
+        uint32_t W = Src.GetWidth();
+        uint32_t H = Src.GetHeight();
+        Create(W, H);
+        GenericImage<PixelType::Mono8>::iterator it_src = Src.begin();
+        IntegralImage::iterator it_dst = begin();
+        it_dst[0] = it_src[0] * it_src[0];
+        ++it_dst;
+        ++it_src;
+        IntegralImage::iterator it_sum = begin();
+        for (uint32_t x = 1; x < W; ++x, ++it_dst, ++it_src, ++it_sum)
         {
-            LocalSum += (it_src[0] * it_src[0]);
-            it_dst[0] = it_sum[0] + LocalSum;
+            it_dst[0] = it_sum[0] + it_src[0] * it_src[0];
+        }
+        it_sum = begin();
+        for (uint32_t y = 1; y < H; ++y)
+        {
+            uint32_t LocalSum = 0;
+            for (uint32_t x = 0; x < W; ++x, ++it_dst, ++it_src, ++it_sum)
+            {
+                LocalSum += (it_src[0] * it_src[0]);
+                it_dst[0] = it_sum[0] + LocalSum;
+            }
         }
     }
-}
-
+};
 
 #endif //JIMLIB_INTEGRALIMAGE_HPP
 

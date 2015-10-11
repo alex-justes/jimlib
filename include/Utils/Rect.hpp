@@ -27,39 +27,41 @@
 #define JIMLIB_RECT_HPP
 
 #include <cstdint>
-
-class Rect
+namespace jimlib
 {
-public:
-    Rect();
-    Rect(int32_t top, int32_t left, int32_t bottom, int32_t right);
-    bool Check(uint32_t W, uint32_t H);
-    int32_t top;
-    int32_t left;
-    int32_t bottom;
-    int32_t right;
-};
+    class Rect
+    {
+    public:
+        Rect();
+        Rect(int32_t top, int32_t left, int32_t bottom, int32_t right);
+        bool Check(uint32_t W, uint32_t H);
+        int32_t top;
+        int32_t left;
+        int32_t bottom;
+        int32_t right;
+    };
 
 // =======================================================
 
-Rect::Rect()
-        : top(0),
-          left(0),
-          bottom(0),
-          right(0)
-{ }
+    inline Rect::Rect()
+            : top(0),
+              left(0),
+              bottom(0),
+              right(0)
+    { }
 
-Rect::Rect(int32_t _top, int32_t _left, int32_t _bottom, int32_t _right)
-        : top(_top),
-          left(_left),
-          bottom(_bottom),
-          right(_right)
-{ }
+    inline Rect::Rect(int32_t _top, int32_t _left, int32_t _bottom, int32_t _right)
+            : top(_top),
+              left(_left),
+              bottom(_bottom),
+              right(_right)
+    { }
 
-bool Rect::Check(uint32_t W, uint32_t H)
-{
-    bool A = left > 0 && right > 0 && top > 0 && bottom > 0;
-    bool B = left < W && right < W && top < H && bottom < H;
-    return (A && B);
-}
+    inline bool Rect::Check(uint32_t W, uint32_t H)
+    {
+        bool A = left > 0 && right > 0 && top > 0 && bottom > 0;
+        bool B = left < W && right < W && top < H && bottom < H;
+        return (A && B);
+    }
+};
 #endif // JIMLIB_RECT_HPP

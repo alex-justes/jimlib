@@ -25,15 +25,17 @@
 
 #ifndef JIMLIB_CHECKTYPES_HPP
 #define JIMLIB_CHECKTYPES_HPP
-
-template <class A, class B>
-struct CheckTypes
+namespace jimlib
 {
-    static const bool areSame = false;
-};
-template <class A>
-struct CheckTypes<A, A>
-{
-    static const bool areSame = true;
+    template<class A, class B>
+    struct CheckTypes
+    {
+        static const bool areSame = false;
+    };
+    template<class A>
+    struct CheckTypes<A, A>
+    {
+        static const bool areSame = true;
+    };
 };
 #endif //JIMLIB_CHECKTYPES_HPP
