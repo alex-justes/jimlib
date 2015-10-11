@@ -15,7 +15,7 @@
  *     in a product, an acknowledgment in the product documentation would be
  *     appreciated but is not required.
  *  2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
+ *     misrepresented as being the original software.
  *  3. This notice may not be removed or altered from any source distribution.
  *
  *  Alexey Titov
@@ -34,9 +34,15 @@ class GrayImage : public GenericImage<PixelType::Mono8>
 public:
     template<typename Pixel>
     void Convert(const GenericImage<Pixel> &RGB24Image);
+    template <typename Pixel>
+    void Convert(const GenericImage<Pixel> &Src, uint8_t Plant);
+    // TODO: Move it to somnething like ImageProcessing class
+    void AdjustColor(double k, double b);
     void CopyFrom(const GrayImage &Src);
     void CopyTo(GrayImage &Dst) const;
 };
+
+// =======================================================
 
 template<typename Pixel>
 void GrayImage::Convert(const GenericImage<Pixel> &RGB24Image)
@@ -52,7 +58,18 @@ void GrayImage::Convert(const GenericImage<Pixel> &RGB24Image)
     }
 }
 
-// =======================================================
+template <typename Pixel>
+void GrayImage::Convert(const GenericImage<Pixel> &Src, uint8_t Plant)
+{
+    assert(Plant < GenericImage<Pixel>::Plants);
+    Create(Src.GetWidth(), Src.GetHeight());
+    typename GenericImage<Pixel>::iterator it_src = Src.begin();
+    GrayImage::iterator it_dst = begin();
+    for (; it_src != Src.end(); ++it_src, ++it_dst)
+    {
+        it_dst[0] = it_src[Plant];
+    }
+}
 
 void GrayImage::CopyFrom(const GrayImage &Src)
 {
@@ -63,4 +80,15 @@ void GrayImage::CopyTo(GrayImage &Dst) const
     CopyToInternal(Dst);
 }
 
+void GrayImage::AdjustColor(double k, double b)
+{
+    GrayImage::iterator it = begin();
+    for(; it != end(); ++it)
+    {
+        int32_t V = (k*it[0] + b);
+        V = V < 0 ? 0 : V;
+        V = V > 255 ? 255 : V;
+        it[0] = V;
+    }
+}
 #endif //JIMLIB_GRAYIMAGE_HPP

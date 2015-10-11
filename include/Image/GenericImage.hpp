@@ -15,7 +15,7 @@
  *     in a product, an acknowledgment in the product documentation would be
  *     appreciated but is not required.
  *  2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
+ *     misrepresented as being the original software.
  *  3. This notice may not be removed or altered from any source distribution.
  *
  *  Alexey Titov
@@ -117,7 +117,8 @@ public:
      * \param[in] Plant Image plant
      * \return Value of the Pixel[Plant]
      */
-    typename Pixel::Type GetPixel(uint32_t x, uint32_t y, uint8_t Plant) const;
+    const typename Pixel::Type &GetPixel(uint32_t x, uint32_t y, uint8_t Plant) const;
+    typename Pixel::Type &GetPixel(uint32_t x, uint32_t y, uint8_t Plant);
 
     /*!
      * Set Pixel[Plant] value located at the (x, y)
@@ -134,7 +135,8 @@ public:
      * \param[in] y Y Coordinate
      * \return Pixel value
      */
-    Pixel GetPixel(uint32_t x, uint32_t y) const;
+    const Pixel &GetPixel(uint32_t x, uint32_t y) const;
+    Pixel &GetPixel(uint32_t x, uint32_t y);
 
     /*!
      * Set Pixel value located at the (x, y)
@@ -403,13 +405,27 @@ unsigned int GenericImage<Pixel>::GetHeight() const
     return m_Height;
 }
 template <typename Pixel>
-typename Pixel::Type GenericImage<Pixel>::GetPixel(uint32_t x, uint32_t y, uint8_t Plant) const
+const typename Pixel::Type &GenericImage<Pixel>::GetPixel(uint32_t x, uint32_t y, uint8_t Plant) const
 {
     assert(Plant < Plants);
     return *(reinterpret_cast<typename Pixel::Type *>(m_RawData + y * m_Offset + x * SizeOfPixel) + Plant);
 }
 template <typename Pixel>
-Pixel GenericImage<Pixel>::GetPixel(uint32_t x, uint32_t y) const
+typename Pixel::Type &GenericImage<Pixel>::GetPixel(uint32_t x, uint32_t y, uint8_t Plant)
+{
+    assert(Plant < Plants);
+    return *(reinterpret_cast<typename Pixel::Type *>(m_RawData + y * m_Offset + x * SizeOfPixel) + Plant);
+}
+template <typename Pixel>
+const Pixel &GenericImage<Pixel>::GetPixel(uint32_t x, uint32_t y) const
+{
+    Pixel pix;
+    typename GenericImage<Pixel>::iterator it = GetColRow(x, y);
+    memcpy(pix.m_Buffer, *it, pix.SizeOfPixel);
+    return pix;
+}
+template <typename Pixel>
+Pixel &GenericImage<Pixel>::GetPixel(uint32_t x, uint32_t y)
 {
     Pixel pix;
     typename GenericImage<Pixel>::iterator it = GetColRow(x, y);

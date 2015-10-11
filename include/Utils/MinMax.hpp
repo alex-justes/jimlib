@@ -23,27 +23,11 @@
  *  https://github.com/alex-justes/jimlib
  */
 
-#ifndef JIMLIB_RGB24IMAGE_HPP
-#define JIMLIB_RGB24IMAGE_HPP
 
-#include "Image/GenericImage.hpp"
-#include "Image/PixelTypes.hpp"
-
-class RGB24Image : public GenericImage<PixelType::RGB24>
-{
-    void CopyFrom(const RGB24Image &Src);
-    void CopyTo(RGB24Image &Dst) const;
-};
-
-// =======================================================
-
-void RGB24Image::CopyFrom(const RGB24Image &Src)
-{
-    CopyFromInternal(Src);
-}
-void RGB24Image::CopyTo(RGB24Image &Dst) const
-{
-    CopyToInternal(Dst);
-}
-
-#endif //JIMLIB_RGB24IMAGE_HPP
+#ifndef JIMLIB_MINMAX_HPP
+#define JIMLIB_MINMAX_HPP
+template<typename T>
+T min(T a, T b) { return (a < b ? a : b); }
+template<typename T>
+T max(T a, T b) { return (a > b ? a : b); }
+#endif //JIMLIB_MINMAX_HPP
