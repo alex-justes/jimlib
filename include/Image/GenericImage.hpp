@@ -140,8 +140,6 @@ namespace jimlib
          */
         const Pixel &GetPixel(uint32_t x, uint32_t y) const;
 
-        Pixel &GetPixel(uint32_t x, uint32_t y);
-
         /*!
          * Set Pixel value located at the (x, y)
          * \param[in] x X Coordinate
