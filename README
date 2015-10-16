@@ -6,6 +6,7 @@ Library is licensed under zlib-license, so feel free to use it, change and contr
 
 [Documentation]
 I will use DOxygen style of documentation. But it will take some time to document everything i want, so prepare to be patient.
+Coming soon: Examples! :)
 
 [History]
 I'am working in the field of the computer vision ang image recognition. So i decided to make lightweight library which provides some simple (and maybe not so simple) methods to process image data.
