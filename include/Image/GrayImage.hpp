@@ -55,7 +55,7 @@ namespace jimlib
         static_assert(CheckTypes<Pixel, PixelType::RGB24>::areSame || CheckTypes<Pixel, PixelType::RGBA32>::areSame,
                       "GrayImage.Convert allow only RGB24 or RGBA32 images");
         Create(RGB24Image.GetWidth(), RGB24Image.GetHeight());
-        GenericImage<PixelType::RGB24>::iterator it_src = RGB24Image.begin();
+        GenericImage<PixelType::RGB24>::const_iterator it_src = RGB24Image.begin();
         GrayImage::iterator it_dst = begin();
         for (; it_src != RGB24Image.end(); ++it_src, ++it_dst)
         {
@@ -68,7 +68,7 @@ namespace jimlib
     {
         assert(Plant < GenericImage<Pixel>::Plants);
         Create(Src.GetWidth(), Src.GetHeight());
-        typename GenericImage<Pixel>::iterator it_src = Src.begin();
+        typename GenericImage<Pixel>::const_iterator it_src = Src.begin();
         GrayImage::iterator it_dst = begin();
         for (; it_src != Src.end(); ++it_src, ++it_dst)
         {

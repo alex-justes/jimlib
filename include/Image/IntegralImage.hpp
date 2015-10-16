@@ -82,7 +82,7 @@ namespace jimlib
         uint32_t W = Src.GetWidth();
         uint32_t H = Src.GetHeight();
         Create(W, H);
-        GenericImage<PixelType::Mono8>::iterator it_src = Src.begin();
+        GenericImage<PixelType::Mono8>::const_iterator it_src = Src.begin();
         IntegralImage::iterator it_dst = begin();
         it_dst[0] = it_src[0];
         ++it_dst;
@@ -110,7 +110,7 @@ namespace jimlib
         uint32_t W = Src.GetWidth();
         uint32_t H = Src.GetHeight();
         Create(W, H);
-        GenericImage<PixelType::Mono8>::iterator it_src = Src.begin();
+        GenericImage<PixelType::Mono8>::const_iterator it_src = Src.begin();
         IntegralImage::iterator it_dst = begin();
         it_dst[0] = it_src[0] * it_src[0];
         ++it_dst;

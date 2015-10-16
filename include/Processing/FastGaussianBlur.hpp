@@ -72,8 +72,8 @@ namespace jimlib
         uint32_t H = Src.GetHeight();
         uint32_t r = (R - 1) / 2;
 
-        typename GenericImage<PixelSrc>::iterator it_l = Src.begin();
-        typename GenericImage<PixelSrc>::iterator it_r = Src.begin();
+        typename GenericImage<PixelSrc>::const_iterator it_l = Src.begin();
+        typename GenericImage<PixelSrc>::const_iterator it_r = Src.begin();
         typename GenericImage<PixelDst>::iterator it_blur = HSum.begin();
 
         for (uint32_t y = 0; y < H; ++y)
@@ -132,8 +132,8 @@ namespace jimlib
         memset(PartialSum, 0, sizeof(PartialSum));
         double S = 1.0 / (R * R);
 
-        typename GenericImage<PixelSrc>::iterator it_d = Src.begin();
-        typename GenericImage<PixelSrc>::iterator it_u = Src.begin();
+        typename GenericImage<PixelSrc>::const_iterator it_d = Src.begin();
+        typename GenericImage<PixelSrc>::const_iterator it_u = Src.begin();
         typename GenericImage<PixelDst>::iterator it_b = VSum.begin();
 
         for (uint32_t y = 0; y <= r; ++y)

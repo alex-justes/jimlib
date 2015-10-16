@@ -58,7 +58,7 @@ namespace jimlib
         uint32_t W = Src.GetWidth();
         uint32_t H = Src.GetHeight();
         Create(W, H, PixelType::Mono8(0));
-        GrayImage::iterator it_src = Src.begin();
+        GrayImage::const_iterator it_src = Src.begin();
         BinaryImage::iterator it_dst = begin();
         for (; it_src != Src.end(); ++it_src, ++it_dst)
         {
@@ -75,7 +75,7 @@ namespace jimlib
 
     inline void BinaryImage::Otsu(const GrayImage &Src)
     {
-        GrayImage::iterator it_src = Src.begin();
+        GrayImage::const_iterator it_src = Src.begin();
         uint32_t Histo[256];
         memset(Histo, 0, sizeof(Histo));
         for (; it_src != Src.end(); ++it_src)
@@ -134,7 +134,7 @@ namespace jimlib
         uint32_t W = Src.GetWidth();
         uint32_t H = Src.GetHeight();
         Create(W, H, PixelType::Mono8(0));
-        GrayImage::iterator it_src = Src.begin();
+        GrayImage::const_iterator it_src = Src.begin();
         BinaryImage::iterator it_dst = begin();
         double Sq = (1 + WindowSize) * (1 + WindowSize);
         for (uint32_t y = 0; y < H; ++y)

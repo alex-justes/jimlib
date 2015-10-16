@@ -87,7 +87,7 @@ namespace jimlib
     uint16_t Cluster::ExtractClustersInternal(const GenericImage<Pixel> &Image)
     {
         static_assert(GenericImage<Pixel>::Plants == 1, "Only Images with 1 plant are allowed!");
-        typename GenericImage<Pixel>::iterator it_mass = Image.begin();
+        typename GenericImage<Pixel>::const_iterator it_mass = Image.begin();
         Cluster::iterator it = begin();
         for (uint32_t y = 0; y < GetHeight(); ++y)
         {
@@ -176,7 +176,7 @@ namespace jimlib
             Cluster::iterator _l = GetColRow(0, y);
             Cluster::iterator *Neighbours[4] = {&_ul, &_u, &_ur, &_l};
             Cluster::iterator _c = GetColRow(1, y);
-            BinaryImage::iterator it = Image.GetColRow(1, y);
+            BinaryImage::const_iterator it = Image.GetColRow(1, y);
             for (uint32_t x = 1; x < Image.GetWidth() - 1; ++x, ++_ul, ++_u, ++_l, ++_c, ++_ur, ++it)
             {
                 if (it[0] > 0)
