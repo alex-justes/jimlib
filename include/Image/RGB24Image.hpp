@@ -32,6 +32,7 @@ namespace jimlib
 {
     class RGB24Image : public GenericImage<PixelType::RGB24>
     {
+    public:
         void CopyFrom(const RGB24Image &Src);
         void CopyTo(RGB24Image &Dst) const;
     };

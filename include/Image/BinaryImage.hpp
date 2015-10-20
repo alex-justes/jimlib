@@ -34,9 +34,15 @@ namespace jimlib
     class BinaryImage : public GenericImage<PixelType::Mono8>
     {
     public:
-        void Otsu(const GrayImage &Src);
-        void Niblack(const GrayImage &Src, uint32_t WindowSize, double K);
-        void Threshold(const GrayImage &Src, uint8_t Threshold);
+        template <typename Pixel>
+        void Otsu(const GenericImage<Pixel> &Src);
+        template <typename Pixel>
+        void Niblack(const GenericImage<Pixel> &Src, uint32_t WindowSize, double K);
+        template <typename Pixel>
+        void ThresholdUp(const GenericImage<Pixel> &Src, typename Pixel::Type Threshold);
+        template <typename Pixel>
+        void ThresholdDown(const GenericImage<Pixel> &Src, typename Pixel::Type Threshold);
+        void Invert();
         void CopyFrom(const BinaryImage &Src);
         void CopyTo(BinaryImage &Dst) const;
     };
@@ -53,12 +59,14 @@ namespace jimlib
         CopyToInternal(Dst);
     }
 
-    inline void BinaryImage::Threshold(const GrayImage &Src, uint8_t Threshold)
+    template <typename Pixel>
+    void BinaryImage::ThresholdUp(const GenericImage<Pixel> &Src, typename Pixel::Type Threshold)
     {
+        static_assert(GenericImage<Pixel>::Plants == 1, "Binary image supports only images with 1 plant.");
         uint32_t W = Src.GetWidth();
         uint32_t H = Src.GetHeight();
         Create(W, H, PixelType::Mono8(0));
-        GrayImage::const_iterator it_src = Src.begin();
+        typename GenericImage<Pixel>::const_iterator it_src = Src.begin();
         BinaryImage::iterator it_dst = begin();
         for (; it_src != Src.end(); ++it_src, ++it_dst)
         {
@@ -72,10 +80,33 @@ namespace jimlib
             }
         }
     }
-
-    inline void BinaryImage::Otsu(const GrayImage &Src)
+    template <typename Pixel>
+    void BinaryImage::ThresholdDown(const GenericImage<Pixel> &Src, typename Pixel::Type Threshold)
     {
-        GrayImage::const_iterator it_src = Src.begin();
+        static_assert(GenericImage<Pixel>::Plants == 1, "Binary image supports only images with 1 plant.");
+        uint32_t W = Src.GetWidth();
+        uint32_t H = Src.GetHeight();
+        Create(W, H, PixelType::Mono8(0));
+        typename GenericImage<Pixel>::const_iterator it_src = Src.begin();
+        BinaryImage::iterator it_dst = begin();
+        for (; it_src != Src.end(); ++it_src, ++it_dst)
+        {
+            if (it_src[0] < Threshold)
+            {
+                it_dst[0] = 1;
+            }
+            else
+            {
+                it_dst[0] = 0;
+            }
+        }
+    }
+
+    template <typename Pixel>
+    void BinaryImage::Otsu(const GenericImage<Pixel> &Src)
+    {
+        static_assert(GenericImage<Pixel>::Plants == 1, "Binary image supports only images with 1 plant.");
+        typename GenericImage<Pixel>::const_iterator it_src = Src.begin();
         uint32_t Histo[256];
         memset(Histo, 0, sizeof(Histo));
         for (; it_src != Src.end(); ++it_src)
@@ -91,7 +122,7 @@ namespace jimlib
         }
         uint32_t PartialEnergy = 0;
         uint32_t PartialSum = 0;
-        uint32_t Threshold = 0;
+        typename Pixel::Type Threshold = 0;
         double w1 = 0;
         double a = 0;
         double Sigma = 0;
@@ -125,8 +156,10 @@ namespace jimlib
         }
     }
 
-    inline void BinaryImage::Niblack(const GrayImage &Src, uint32_t WindowSize, double K)
+    template <typename Pixel>
+    void BinaryImage::Niblack(const GenericImage<Pixel> &Src, uint32_t WindowSize, double K)
     {
+        static_assert(GenericImage<Pixel>::Plants == 1, "Binary image supports only images with 1 plant.");
         IntegralImage Mean;
         IntegralImage Mean2;
         Mean.Calculate(Src);
@@ -134,7 +167,7 @@ namespace jimlib
         uint32_t W = Src.GetWidth();
         uint32_t H = Src.GetHeight();
         Create(W, H, PixelType::Mono8(0));
-        GrayImage::const_iterator it_src = Src.begin();
+        typename GenericImage<Pixel>::const_iterator it_src = Src.begin();
         BinaryImage::iterator it_dst = begin();
         double Sq = (1 + WindowSize) * (1 + WindowSize);
         for (uint32_t y = 0; y < H; ++y)
@@ -155,6 +188,14 @@ namespace jimlib
                     it_dst[0] = 0;
                 }
             }
+        }
+    }
+    inline void BinaryImage::Invert()
+    {
+        BinaryImage::iterator it = begin();
+        for (; it != end(); ++it)
+        {
+            it[0] = it[0]^1;
         }
     }
 };

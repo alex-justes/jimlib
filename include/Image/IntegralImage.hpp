@@ -34,8 +34,10 @@ namespace jimlib
     class IntegralImage : public GenericImage<PixelType::Mono64>
     {
     public:
-        void Calculate(const GenericImage <PixelType::Mono8> &Src);
-        void CalculateSquared(const GenericImage <PixelType::Mono8> &Src);
+        template <typename Pixel>
+        void Calculate(const GenericImage <Pixel> &Src);
+        template <typename Pixel>
+        void CalculateSquared(const GenericImage <Pixel> &Src);
         uint64_t GetSum(const Rect &rc) const;
         uint64_t GetSumUnsafe(const Rect &rc) const;
         uint64_t GetFullSumUnsafe(uint32_t x, uint32_t y) const;
@@ -77,12 +79,13 @@ namespace jimlib
         return GetPixel(x, y, 0);
     }
 
-    inline void IntegralImage::Calculate(const GenericImage <PixelType::Mono8> &Src)
+    template <typename Pixel>
+    void IntegralImage::Calculate(const GenericImage<Pixel> &Src)
     {
         uint32_t W = Src.GetWidth();
         uint32_t H = Src.GetHeight();
         Create(W, H);
-        GenericImage<PixelType::Mono8>::const_iterator it_src = Src.begin();
+        typename GenericImage<Pixel>::const_iterator it_src = Src.begin();
         IntegralImage::iterator it_dst = begin();
         it_dst[0] = it_src[0];
         ++it_dst;
@@ -104,13 +107,13 @@ namespace jimlib
             }
         }
     }
-
-    inline void IntegralImage::CalculateSquared(const GenericImage <PixelType::Mono8> &Src)
+    template <typename Pixel>
+    void IntegralImage::CalculateSquared(const GenericImage<Pixel> &Src)
     {
         uint32_t W = Src.GetWidth();
         uint32_t H = Src.GetHeight();
         Create(W, H);
-        GenericImage<PixelType::Mono8>::const_iterator it_src = Src.begin();
+        typename GenericImage<Pixel>::const_iterator it_src = Src.begin();
         IntegralImage::iterator it_dst = begin();
         it_dst[0] = it_src[0] * it_src[0];
         ++it_dst;
