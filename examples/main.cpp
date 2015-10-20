@@ -11,6 +11,7 @@
  *  \date October 2015
  *
  *  Here is a little example of jimlib usage.
+ *  You should put cballs.png in current working directory in order it to process it correctly.
  *  Dependencies: libpng
  */
 
