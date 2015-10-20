@@ -27,7 +27,6 @@
 #define JIMLIB_BINARYIMAGE_HPP
 
 #include <cmath>
-#include "Image/GrayImage.hpp"
 #include "Image/IntegralImage.hpp"
 namespace jimlib
 {
