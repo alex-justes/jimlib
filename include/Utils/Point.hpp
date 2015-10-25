@@ -28,25 +28,29 @@
 #include <cstdint>
 namespace jimlib
 {
+    template<typename T>
     class Point
     {
     public:
         Point();
-        Point(int32_t x, int32_t y);
+        Point(T x, T y);
         Point(const Point &point);
-        int32_t x;
-        int32_t y;
+        T x;
+        T y;
     };
 
     // =======================================================
 
-    inline Point::Point()
+    template <typename T>
+    Point<T>::Point()
     : x(0), y(0)
     { }
-    inline Point::Point(int32_t _x, int32_t _y)
+    template <typename T>
+    Point<T>::Point(T _x, T _y)
     : x(_x), y(_y)
     { }
-    inline Point::Point(const Point &point)
+    template <typename T>
+    Point<T>::Point(const Point &point)
     : x(point.x), y(point.y)
     { }
 };

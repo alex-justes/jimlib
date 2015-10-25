@@ -38,8 +38,8 @@ namespace jimlib
         void Calculate(const GenericImage <Pixel> &Src);
         template <typename Pixel>
         void CalculateSquared(const GenericImage <Pixel> &Src);
-        uint64_t GetSum(const Rect &rc) const;
-        uint64_t GetSumUnsafe(const Rect &rc) const;
+        uint64_t GetSum(const Rect<int32_t> &rc) const;
+        uint64_t GetSumUnsafe(const Rect<int32_t> &rc) const;
         uint64_t GetFullSumUnsafe(uint32_t x, uint32_t y) const;
     private:
         uint64_t GetSum(int32_t x, int32_t y) const;
@@ -56,7 +56,7 @@ namespace jimlib
         return GetPixel(x, y, 0);
     }
 
-    inline uint64_t IntegralImage::GetSum(const Rect &rc) const
+    inline uint64_t IntegralImage::GetSum(const Rect<int32_t> &rc) const
     {
         uint64_t A = GetSum(rc.right, rc.bottom);
         uint64_t B = GetSum(rc.left - 1, rc.top - 1);
@@ -65,7 +65,7 @@ namespace jimlib
         return (A + B - C - D);
     }
 
-    inline uint64_t IntegralImage::GetSumUnsafe(const Rect &rc) const
+    inline uint64_t IntegralImage::GetSumUnsafe(const Rect<int32_t> &rc) const
     {
         return (GetPixel(rc.right, rc.bottom, 0)
                 + GetPixel(rc.left - 1, rc.top - 1, 0)

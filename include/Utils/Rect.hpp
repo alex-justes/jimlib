@@ -29,39 +29,44 @@
 #include <cstdint>
 namespace jimlib
 {
+    template <typename T>
     class Rect
     {
     public:
         Rect();
-        Rect(int32_t top, int32_t left, int32_t bottom, int32_t right);
-        bool Check(uint32_t W, uint32_t H);
-        int32_t top;
-        int32_t left;
-        int32_t bottom;
-        int32_t right;
+        Rect(T top, T left, T bottom, T right);
+        Rect(const Rect &Rc);
+        T top;
+        T left;
+        T bottom;
+        T right;
     };
 
 // =======================================================
 
-    inline Rect::Rect()
+    template <typename T>
+    Rect<T>::Rect()
             : top(0),
               left(0),
               bottom(0),
               right(0)
     { }
 
-    inline Rect::Rect(int32_t _top, int32_t _left, int32_t _bottom, int32_t _right)
+    template <typename T>
+    Rect<T>::Rect(T _top, T _left, T _bottom, T _right)
             : top(_top),
               left(_left),
               bottom(_bottom),
               right(_right)
     { }
 
-    inline bool Rect::Check(uint32_t W, uint32_t H)
-    {
-        bool A = left > 0 && right > 0 && top > 0 && bottom > 0;
-        bool B = left < W && right < W && top < H && bottom < H;
-        return (A && B);
-    }
+    template <typename T>
+    Rect<T>::Rect(const Rect &Rc)
+            : top(Rc.top),
+              left(Rc.left),
+              bottom(Rc.bottom),
+              right(Rc.right)
+    { }
+
 };
 #endif // JIMLIB_RECT_HPP

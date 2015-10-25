@@ -43,7 +43,7 @@ namespace jimlib
         double &operator[](uint8_t i);
         const double &operator[](uint8_t i) const;
 
-        Point Transform(const Point &Pt) const;
+        Point<double> Transform(const Point<double> &Pt) const;
 
         void Transform(const AffineTransformation &Transformation);
         void RotateRad(double Angle);
@@ -91,15 +91,13 @@ namespace jimlib
         assert(i < 6);
         return m_Affine[i];
     }
-
-    inline Point AffineTransformation::Transform(const Point &Pt) const
+    inline Point<double> AffineTransformation::Transform(const Point<double> &Pt) const
     {
-        Point _Pt;
+        Point<double> _Pt;
         _Pt.x = Pt.x * m_Affine[0] + Pt.y * m_Affine[1] + m_Affine[2];
         _Pt.y = Pt.x * m_Affine[3] + Pt.y * m_Affine[4] + m_Affine[5];
         return _Pt;
     }
-
     inline void AffineTransformation::Transform(const AffineTransformation &Transformation)
     {
         double a = m_Affine[0];
@@ -108,6 +106,7 @@ namespace jimlib
         double d = m_Affine[3];
         double e = m_Affine[4];
         double f = m_Affine[5];
+
         double _a = Transformation[0];
         double _b = Transformation[1];
         double _c = Transformation[2];
@@ -176,11 +175,11 @@ namespace jimlib
             m_Affine[5] = 0;
             return;
         }
-        m_Affine[0] = e / divisor;
+        m_Affine[0] =  e / divisor;
         m_Affine[1] = -b / divisor;
         m_Affine[2] = (b * f - e * c) / divisor;
         m_Affine[3] = -d / divisor;
-        m_Affine[4] = a / divisor;
+        m_Affine[4] =  a / divisor;
         m_Affine[5] = (c * d - a * f) / divisor;
     }
 
@@ -189,39 +188,40 @@ namespace jimlib
         AffineTransformation InverseAffine = Affine;
         if (Autofit)
         {
-            Point p1 = Affine.Transform(Point(0,0));
-            Point p2 = Affine.Transform(Point(Width,0));
-            Point p3 = Affine.Transform(Point(0,Height));
-            Point p4 = Affine.Transform(Point(Width,Height));
+            Point<double> p1 = Affine.Transform(Point<double>(0,0));
+            Point<double> p2 = Affine.Transform(Point<double>(Width,0));
+            Point<double> p3 = Affine.Transform(Point<double>(0,Height));
+            Point<double> p4 = Affine.Transform(Point<double>(Width,Height));
 
             double MinX = p1.x;
             double MinY = p1.y;
             double MaxX = p1.x;
             double MaxY = p1.y;
 
-            MinX = min(MinX, (double)p2.x);
-            MinX = min(MinX, (double)p3.x);
-            MinX = min(MinX, (double)p4.x);
-            MinY = min(MinY, (double)p2.y);
-            MinY = min(MinY, (double)p3.y);
-            MinY = min(MinY, (double)p4.y);
+            MinX = min(MinX, p2.x);
+            MinX = min(MinX, p3.x);
+            MinX = min(MinX, p4.x);
+            MinY = min(MinY, p2.y);
+            MinY = min(MinY, p3.y);
+            MinY = min(MinY, p4.y);
 
-            MaxX = max(MaxX, (double)p2.x);
-            MaxX = max(MaxX, (double)p3.x);
-            MaxX = max(MaxX, (double)p4.x);
-            MaxY = max(MaxY, (double)p2.y);
-            MaxY = max(MaxY, (double)p3.y);
-            MaxY = max(MaxY, (double)p4.y);
+            MaxX = max(MaxX, p2.x);
+            MaxX = max(MaxX, p3.x);
+            MaxX = max(MaxX, p4.x);
+            MaxY = max(MaxY, p2.y);
+            MaxY = max(MaxY, p3.y);
+            MaxY = max(MaxY, p4.y);
 
             InverseAffine.Shift(-MinX, -MinY);
-            Width = (uint32_t)abs((int32_t)(MaxX - MinX + 0.5));
-            Height = (uint32_t)abs((int32_t)(MaxY - MinY + 0.5));
+            Width =  (uint32_t)abs((int32_t)(round(MaxX - MinX)));
+            Height = (uint32_t)abs((int32_t)(round(MaxY - MinY)));
         }
 
         Create(Width, Height, CoordsXY16(0,0));
 
         InverseAffine.Inverse();
         iterator it = begin();
+        // TODO: It can be done faster
         for (uint32_t y = 0; y < Height; ++y)
         {
             for (uint32_t x = 0; x < Width; ++x, ++it)

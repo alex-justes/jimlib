@@ -173,7 +173,7 @@ namespace jimlib
         {
             for (uint32_t x = 0; x < W; ++x, ++it_src, ++it_dst)
             {
-                Rect rc(y - WindowSize / 2, x - WindowSize / 2, y + WindowSize / 2, x + WindowSize / 2);
+                Rect<int32_t> rc(y - WindowSize / 2, x - WindowSize / 2, y + WindowSize / 2, x + WindowSize / 2);
                 double Mx = Mean.GetSum(rc) / Sq;
                 double Mx2 = Mean2.GetSum(rc) / Sq;
                 double StdDev = sqrt(Mx2 - Mx * Mx);
