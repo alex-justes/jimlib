@@ -222,7 +222,6 @@ namespace jimlib
         Create(Width, Height, CoordsXY16(0,0));
 
         InverseAffine.Inverse();
-        // TODO: It still can be done faster(less multiplication bu calculating (x + 1))
 
         iterator it = begin();
         for (uint32_t x = 0; x < Width; ++x, ++it)
@@ -256,14 +255,26 @@ namespace jimlib
             double RowBaseX = BaseX + (y - 1)*InverseAffine[1];
             double RowBaseY = BaseY + (y - 1)*InverseAffine[4];
             iterator it = GetColRow(1, y);
-            for (uint32_t x = 1; x < Width; ++x, ++it)
+            for (uint32_t x = 1; x < Width; x += 2, ++it)
             {
-                int32_t _x = (int32_t)(RowBaseX + (x - 1)*InverseAffine[0] + 0.5);
-                int32_t _y = (int32_t)(RowBaseY + (x - 1)*InverseAffine[3] + 0.5);
-                if (_x > 0 && _y > 0 && _x < OldWidth && _y < OldHeight)
+                double tmpx = RowBaseX + (x - 1)*InverseAffine[0];
+                double tmpy = RowBaseY + (x - 1)*InverseAffine[3];
+                int32_t _x1 = (int32_t)(tmpx + 0.5);
+                int32_t _y1 = (int32_t)(tmpy + 0.5);
+                int32_t _x2 = (int32_t)(tmpx + InverseAffine[0] + 0.5);
+                int32_t _y2 = (int32_t)(tmpy + InverseAffine[3] + 0.5);
+                if (_x1 > 0 && _y1 > 0 && _x1 < OldWidth && _y1 < OldHeight)
                 {
-                    it[0] = _x;
-                    it[1] = _y;
+                    it[0] = _x1;
+                    it[1] = _y1;
+                }
+
+                ++it;
+
+                if (_x2 > 0 && _y2 > 0 && _x2 < OldWidth && _y2 < OldHeight)
+                {
+                    it[0] = _x2;
+                    it[1] = _y2;
                 }
             }
         }
