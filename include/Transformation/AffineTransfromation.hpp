@@ -186,6 +186,8 @@ namespace jimlib
     inline void AffineTransformationTable::Calculate(uint32_t Width, uint32_t Height, const AffineTransformation &Affine, bool Autofit)
     {
         AffineTransformation InverseAffine = Affine;
+        uint32_t OldWidth = Width;
+        uint32_t OldHeight = Height;
         if (Autofit)
         {
             Point<double> p1 = Affine.Transform(Point<double>(0,0));
@@ -220,15 +222,45 @@ namespace jimlib
         Create(Width, Height, CoordsXY16(0,0));
 
         InverseAffine.Inverse();
+        // TODO: It still can be done faster(less multiplication bu calculating (x + 1))
+
         iterator it = begin();
-        // TODO: It can be done faster
+        for (uint32_t x = 0; x < Width; ++x, ++it)
+        {
+            int32_t _x = (int32_t)(x*InverseAffine[0] + InverseAffine[2] + 0.5);
+            int32_t _y = (int32_t)(x*InverseAffine[3] + InverseAffine[5] + 0.5);
+            if (_x > 0 && _y > 0 && _x < OldWidth && _y < OldHeight)
+            {
+                it[0] = _x;
+                it[1] = _y;
+            }
+        }
+
         for (uint32_t y = 0; y < Height; ++y)
         {
-            for (uint32_t x = 0; x < Width; ++x, ++it)
+            it = GetColRow(0, y);
+            int32_t _x = (int32_t)(y*InverseAffine[1] + InverseAffine[2] + 0.5);
+            int32_t _y = (int32_t)(y*InverseAffine[4] + InverseAffine[5] + 0.5);
+            if (_x > 0 && _y > 0 && _x < OldWidth && _y < OldHeight)
             {
-                int _x = (uint32_t)(InverseAffine[0] * x + InverseAffine[1] * y + InverseAffine[2] + 0.5);
-                int _y = (uint32_t)(InverseAffine[3] * x + InverseAffine[4] * y + InverseAffine[5] + 0.5);
-                if (_x > 0 && _y > 0 && _x < Width && _y < Height)
+                it[0] = _x;
+                it[1] = _y;
+            }
+        }
+
+        double BaseX = InverseAffine[0] + InverseAffine[1] + InverseAffine[2];
+        double BaseY = InverseAffine[3] + InverseAffine[4] + InverseAffine[5];
+
+        for (uint32_t y = 1; y < Height; ++y)
+        {
+            double RowBaseX = BaseX + (y - 1)*InverseAffine[1];
+            double RowBaseY = BaseY + (y - 1)*InverseAffine[4];
+            iterator it = GetColRow(1, y);
+            for (uint32_t x = 1; x < Width; ++x, ++it)
+            {
+                int32_t _x = (int32_t)(RowBaseX + (x - 1)*InverseAffine[0] + 0.5);
+                int32_t _y = (int32_t)(RowBaseY + (x - 1)*InverseAffine[3] + 0.5);
+                if (_x > 0 && _y > 0 && _x < OldWidth && _y < OldHeight)
                 {
                     it[0] = _x;
                     it[1] = _y;

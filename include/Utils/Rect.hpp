@@ -67,6 +67,5 @@ namespace jimlib
               bottom(Rc.bottom),
               right(Rc.right)
     { }
-
 };
 #endif // JIMLIB_RECT_HPP
