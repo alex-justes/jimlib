@@ -2,6 +2,7 @@
 #include "Image/BinaryImage.hpp"
 #include "Processing/FastGaussianBlur.hpp"
 #include "Processing/Cluster.hpp"
+#include "Transformation/AffineTransfromation.hpp"
 #include "PngImage.h"
 
 /*!
@@ -52,6 +53,10 @@ int main()
     Bin.Niblack(GrayAdjusted, 150, 1.5);
     Png.Write(Bin, "./cballs_niblack.png");
 
+    // Example of Sauvola binarization
+    Bin.Sauvola(GrayAdjusted, 20, 0.2);
+    Png.Write(Bin, "./cballs_sauvola.png");
+
     Png.Read("./cballs.png");
     Cluster Objects;
     // Clusterize white objects (glowing white balls)
@@ -62,5 +67,27 @@ int main()
         Png.DrawCross(item.Cx, item.Cy, 20, PixelType::RGB24(0,255,0));
     }
     Png.Write("./cballs_clusterized.png");
+
+
+    Png.Read("./cballs.png");
+    PngImage Png2;
+    Png2.Read("./cballs.png");
+    AffineTransformation Affine;
+    AffineTransformation Affine2;
+
+    GrayImage Gray1, Gray2;
+    Gray1.Convert(Png);
+
+    //Affine.Shift(20, 50);
+    Affine.RotateDeg(22.5);
+    Affine2.Scale(2, 2);
+    //Affine.Scale(0.5, 0.5);
+
+    Affine.Transform(Affine2);
+
+    AffineTransformationTable AffineTable;
+    AffineTable.Calculate(Gray1.GetWidth(), Gray1.GetHeight(), Affine, true);
+    AffineTable.Apply<InterpolationType::NearestNeighbour>(Gray1, Gray2);
+    Png.Write(Gray2, "./cballs_affine.png");
     return 0;
 }

@@ -160,27 +160,31 @@ bool PngImage::Write(const std::string &FileName) const
 
 void PngImage::Convert(const jimlib::BinaryImage &Src)
 {
-    BinaryImage::const_iterator it_src = Src.begin();
-    iterator it_dst = begin();
-
-    for (; it_src != Src.end(); ++it_src, ++it_dst)
+    for (uint32_t y = 0; y < GetHeight(); ++y)
     {
-        it_dst[0] = it_src[0] * 255;
-        it_dst[1] = it_src[0] * 255;
-        it_dst[2] = it_src[0] * 255;
+        BinaryImage::const_iterator it_src = Src.GetColRow(0, y);
+        iterator it_dst = GetColRow(0, y);
+        for (uint32_t x = 0; x < GetWidth(); ++x, ++it_src, ++it_dst)
+        {
+            it_dst[0] = it_src[0] * 255;
+            it_dst[1] = it_src[0] * 255;
+            it_dst[2] = it_src[0] * 255;
+        }
     }
 }
 
 void PngImage::Convert(const jimlib::GrayImage &Src)
 {
-    GrayImage::const_iterator it_src = Src.begin();
-    iterator it_dst = begin();
-
-    for (; it_src != Src.end(); ++it_src, ++it_dst)
+    for (uint32_t y = 0; y < GetHeight(); ++y)
     {
-        it_dst[0] = it_src[0];
-        it_dst[1] = it_src[0];
-        it_dst[2] = it_src[0];
+        GrayImage::const_iterator it_src = Src.GetColRow(0, y);
+        iterator it_dst = GetColRow(0, y);
+        for (uint32_t x = 0; x < GetWidth(); ++x, ++it_src, ++it_dst)
+        {
+            it_dst[0] = it_src[0];
+            it_dst[1] = it_src[0];
+            it_dst[2] = it_src[0];
+        }
     }
 }
 
