@@ -24,19 +24,22 @@ jimlib won't provide as fast, good and tested algorithms and primitives as openc
  * Binarization algorithms:
    - Niblack
    - Otsu
+   - Sauvola
    - Simple threshold
  * Integral image
- * Fast Gaussian Blur
- * 2-pass clusterization of the binary image
+ * Fast Pseudo-Gaussian Blur 
+ * 2-pass clusterization of the binary image(with nearby cluster merging)
+ * Generic transformation table
+ * Affine transformation
 
 [Features which will be implemented soon]
  * Lens distortion correction
  * Different convolutions
  * Haar-like features
- * Projective transormation (and affine)
+ * Projective transormation.
   
 [Current goal]
-Affine and Projective transformations. Transformations' matrix (to be able to apply same transformations fast).
+Projective transformations, convolutions.
 
 [What will never be implemented]
 IO. I don't want to provide any kind of IO actions, because it would force me to stick to some libraries (libpng, libjpeg etc) or write my own "another-new-standard". But i will provide few examples of using libpng and libjpeg to perform IO actions.
