@@ -40,6 +40,8 @@ namespace jimlib
         T left;
         T bottom;
         T right;
+        T &operator [](uint8_t p);
+        const T &operator [](uint8_t p) const;
     };
 
 // =======================================================
@@ -67,5 +69,39 @@ namespace jimlib
               bottom(Rc.bottom),
               right(Rc.right)
     { }
+    template<typename T>
+    T &Rect<T>::operator[](uint8_t p)
+    {
+        switch (p)
+        {
+            case 0:
+                return top;
+            case 1:
+                return left;
+            case 2:
+                return bottom;
+            case 3:
+                return right;
+            default:
+                return top;
+        }
+    }
+    template<typename T>
+    const T &Rect<T>::operator[](uint8_t p) const
+    {
+        switch (p)
+        {
+            case 0:
+                return top;
+            case 1:
+                return left;
+            case 2:
+                return bottom;
+            case 3:
+                return right;
+            default:
+                return top;
+        }
+    }
 };
 #endif // JIMLIB_RECT_HPP
