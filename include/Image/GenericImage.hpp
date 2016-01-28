@@ -141,6 +141,14 @@ namespace jimlib
         const Pixel GetPixel(uint32_t x, uint32_t y) const;
 
         /*!
+         * Get pointer to Pixel located at the (x, y)
+         * \param[in] x X Coordinate
+         * \param[in] y Y Coordinate
+         * \return pointer to Pixel
+         */
+        typename Pixel::Type * GetPixel(uint32_t x, uint32_t y);
+
+        /*!
          * Set Pixel value located at the (x, y)
          * \param[in] x X Coordinate
          * \param[in] y Y Coordinate
@@ -582,6 +590,11 @@ namespace jimlib
         typename GenericImage<Pixel>::const_iterator it = GetColRow(x, y);
         memcpy(pix.m_Buffer, *it, pix.SizeOfPixel);
         return pix;
+    }
+    template<typename Pixel>
+    typename Pixel::Type * GenericImage<Pixel>::GetPixel(uint32_t x, uint32_t y)
+    {
+        return (*GetColRow(x,y));
     }
 
     template<typename Pixel>

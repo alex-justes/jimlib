@@ -34,17 +34,57 @@ namespace jimlib
     class GenericPixel
     {
     public:
+        GenericPixel();
+        GenericPixel(T * Buffer);
+        GenericPixel(const GenericPixel &p);
+        void CopyTo(GenericPixel &p);
+        virtual ~GenericPixel();
         T &operator[](uint8_t Plant);
         const T &operator[](uint8_t Plant) const;
         static const uint8_t Plants = PlantsAmount;
         static const uint32_t SizeOfPixel = sizeof(T) * PlantsAmount;
         typedef T Type;
         typedef GenericPixel<T, PlantsAmount> ParentType;
-        T m_Buffer[PlantsAmount];
+        T * m_Buffer;
+    private:
+        bool m_Allocated;
     };
 
 // =======================================================
 
+    template<typename T, uint8_t PlantsAmount>
+    GenericPixel<T, PlantsAmount>::GenericPixel()
+    : m_Buffer(nullptr), m_Allocated(true)
+    {
+        m_Buffer = new T[PlantsAmount];
+    }
+
+    template<typename T, uint8_t PlantsAmount>
+    GenericPixel<T, PlantsAmount>::GenericPixel(T * Buffer)
+    : m_Buffer(Buffer), m_Allocated(false)
+    {
+    }
+
+    template<typename T, uint8_t PlantsAmount>
+    GenericPixel<T, PlantsAmount>::GenericPixel(const GenericPixel<T, PlantsAmount> &p)
+    : m_Buffer(p.m_Buffer), m_Allocated(false)
+    {
+    }
+
+    template<typename T, uint8_t PlantsAmount>
+    GenericPixel<T, PlantsAmount>::~GenericPixel()
+    {
+        if (m_Allocated && m_Buffer != nullptr)
+        {
+            delete[] m_Buffer;
+        }
+    }
+
+    template<typename T, uint8_t PlantsAmount>
+    void GenericPixel<T, PlantsAmount>::CopyTo(GenericPixel &p)
+    {
+        memcpy(p.m_Buffer, m_Buffer, sizeof(T) * PlantsAmount);
+    }
     template<typename T, uint8_t PlantsAmount>
     T &GenericPixel<T, PlantsAmount>::operator[](uint8_t Plant)
     {
