@@ -30,10 +30,15 @@
 #include "Image/PixelTypes.hpp"
 #include "Image/BinaryImage.hpp"
 #include "Utils/MinMax.hpp"
+#include "Utils/Graph.hpp"
+
 namespace jimlib
 {
+    class Cluster;
+
     class ClusterItem
     {
+    friend class Cluster;
     public:
         ClusterItem();
 
@@ -42,8 +47,12 @@ namespace jimlib
         uint64_t SumY;
         uint32_t Cx;
         uint32_t Cy;
+        double fCx;
+        double fCy;
 
         void CalculateCenter();
+    private:
+        bool m_Used;
     };
 
     class Cluster : public GenericImage<PixelType::Mono16>
@@ -59,9 +68,16 @@ namespace jimlib
 
         uint16_t GetClustersAmount() const;
 
+        uint16_t MergeNearbyClusters(double Distance);
+
         const ClusterItem &GetCluster(uint16_t idx) const;
 
     private:
+        struct NetWalkData
+        {
+            uint16_t Parent;
+            ClusterItem * pClusters;
+        };
         void ClusterizeInternal(const BinaryImage &Image);
 
         template<typename Pixel>
@@ -140,6 +156,8 @@ namespace jimlib
         {
             Cx = SumX / Mass;
             Cy = SumY / Mass;
+            fCx = (double)SumX / Mass;
+            fCy = (double)SumY / Mass;
         }
     }
 
@@ -211,6 +229,60 @@ namespace jimlib
                 }
             }
         }
+    }
+    inline uint16_t Cluster::MergeNearbyClusters(double Distance)
+    {
+        for (uint32_t i = 0; i < m_ClustersAmount; ++i)
+        {
+            m_Clusters[i].m_Used = false;
+        }
+        Graph Net;
+        Net.Allocate(m_ClustersAmount);
+        for (uint32_t i = 0; i < m_ClustersAmount; ++i)
+        {
+            if (!m_Clusters[i].m_Used)
+            {
+                for (uint32_t j = i + 1; j < m_ClustersAmount; ++j)
+                {
+                    double Dy = m_Clusters[i].fCy - m_Clusters[j].fCy;
+                    double Dx = m_Clusters[i].fCx - m_Clusters[j].fCx;
+                    double D = sqrt(Dy*Dy + Dx*Dx);
+                    if (D < Distance)
+                    {
+                        Net.AddChild(i, j);
+                    }
+                }
+            }
+        }
+        auto Mark = [](uint16_t Node, void * pData)
+        {
+            NetWalkData * pNetWalkData = reinterpret_cast<NetWalkData *>(pData);
+            ClusterItem * pClusters = pNetWalkData->pClusters;
+            uint16_t Parent = pNetWalkData->Parent;
+            pClusters[Parent].SumX += pClusters[Node].SumX;
+            pClusters[Parent].SumY += pClusters[Node].SumY;
+            pClusters[Parent].Mass += pClusters[Node].Mass;
+            pClusters[Node].m_Used = true;
+        };
+        NetWalkData Data;
+        Data.pClusters = m_Clusters;
+        uint16_t RealClusters = 0;
+        for (uint32_t i = 0; i < m_ClustersAmount; ++i)
+        {
+            if (!m_Clusters[i].m_Used)
+            {
+                Data.Parent = i;
+                Net.DFS(i, &Data, Mark);
+                m_Clusters[i].m_Used = true;
+                m_Clusters[RealClusters].SumX = m_Clusters[i].SumX;
+                m_Clusters[RealClusters].SumY = m_Clusters[i].SumY;
+                m_Clusters[RealClusters].Mass = m_Clusters[i].Mass;
+                m_Clusters[RealClusters].CalculateCenter();
+                ++RealClusters;
+            }
+        }
+        m_ClustersAmount = RealClusters;
+        return m_ClustersAmount;
     }
 };
 
