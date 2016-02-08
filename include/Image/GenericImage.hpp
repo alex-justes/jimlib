@@ -113,6 +113,11 @@ namespace jimlib
         uint32_t GetHeight() const;
 
         /*!
+         * \return Offset in bytes between two successive rows
+         */
+        uint32_t GetOffset() const;
+
+        /*!
          * Get Pixel[Plant] value located at the (x, y)
          * \param[in] x X Coordinate
          * \param[in] y Y Coordinate
@@ -567,6 +572,12 @@ namespace jimlib
     unsigned int GenericImage<Pixel>::GetHeight() const
     {
         return m_Height;
+    }
+
+    template<typename Pixel>
+    unsigned int GenericImage<Pixel>::GetOffset() const
+    {
+        return m_Offset;
     }
 
     template<typename Pixel>
