@@ -228,7 +228,7 @@ namespace jimlib
         {
             int32_t _x = (int32_t)(x*InverseAffine[0] + InverseAffine[2] + 0.5);
             int32_t _y = (int32_t)(x*InverseAffine[3] + InverseAffine[5] + 0.5);
-            if (_x > 0 && _y > 0 && _x < OldWidth && _y < OldHeight)
+            if (_x > 0 && _y > 0 && (uint32_t)_x < OldWidth && (uint32_t)_y < OldHeight)
             {
                 it[0] = _x;
                 it[1] = _y;
@@ -240,7 +240,7 @@ namespace jimlib
             it = GetColRow(0, y);
             int32_t _x = (int32_t)(y*InverseAffine[1] + InverseAffine[2] + 0.5);
             int32_t _y = (int32_t)(y*InverseAffine[4] + InverseAffine[5] + 0.5);
-            if (_x > 0 && _y > 0 && _x < OldWidth && _y < OldHeight)
+            if (_x > 0 && _y > 0 && (uint32_t)_x < OldWidth && (uint32_t)_y < OldHeight)
             {
                 it[0] = _x;
                 it[1] = _y;
@@ -263,7 +263,7 @@ namespace jimlib
                 int32_t _y1 = (int32_t)(tmpy + 0.5);
                 int32_t _x2 = (int32_t)(tmpx + InverseAffine[0] + 0.5);
                 int32_t _y2 = (int32_t)(tmpy + InverseAffine[3] + 0.5);
-                if (_x1 > 0 && _y1 > 0 && _x1 < OldWidth && _y1 < OldHeight)
+                if (_x1 > 0 && _y1 > 0 && (uint32_t)_x1 < OldWidth && (uint32_t)_y1 < OldHeight)
                 {
                     it[0] = _x1;
                     it[1] = _y1;
@@ -271,7 +271,7 @@ namespace jimlib
 
                 ++it;
 
-                if (_x2 > 0 && _y2 > 0 && _x2 < OldWidth && _y2 < OldHeight)
+                if (_x2 > 0 && _y2 > 0 && (uint32_t)_x2 < OldWidth && (uint32_t)_y2 < OldHeight)
                 {
                     it[0] = _x2;
                     it[1] = _y2;

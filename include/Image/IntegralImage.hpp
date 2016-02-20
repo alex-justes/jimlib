@@ -51,8 +51,8 @@ namespace jimlib
     {
         if (x < 0 || y < 0)
             return 0;
-        x = (x >= GetWidth()) ? (GetWidth() - 1) : x;
-        y = (y >= GetHeight()) ? (GetHeight() - 1) : y;
+        x = ((uint32_t)x >= GetWidth()) ? (GetWidth() - 1) : x;
+        y = ((uint32_t)y >= GetHeight()) ? (GetHeight() - 1) : y;
         return GetPixel(x, y, 0);
     }
 
