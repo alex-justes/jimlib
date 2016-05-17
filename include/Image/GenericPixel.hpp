@@ -30,7 +30,7 @@
 #include <cassert>
 namespace jimlib
 {
-    template<typename T, uint8_t PlantsAmount>
+    template<typename T, uint8_t PlantsAmount = 1>
     class GenericPixel
     {
     public:

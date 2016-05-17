@@ -117,6 +117,8 @@ namespace jimlib
          */
         uint32_t GetOffset() const;
 
+        size_t GetSize() const;
+
         /*!
          * Get Pixel[Plant] value located at the (x, y)
          * \param[in] x X Coordinate
@@ -578,6 +580,12 @@ namespace jimlib
     unsigned int GenericImage<Pixel>::GetOffset() const
     {
         return m_Offset;
+    }
+
+    template<typename Pixel>
+    size_t GenericImage<Pixel>::GetSize() const
+    {
+        return m_BufSize;
     }
 
     template<typename Pixel>

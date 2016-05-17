@@ -72,9 +72,9 @@ namespace jimlib
         uint32_t H = Src.GetHeight();
         uint32_t r = (R - 1) / 2;
 
-        typename GenericImage<PixelSrc>::const_iterator it_l = Src.begin();
-        typename GenericImage<PixelSrc>::const_iterator it_r = Src.begin();
-        typename GenericImage<PixelDst>::iterator it_blur = HSum.begin();
+        auto it_l = Src.begin();
+        auto it_r = Src.begin();
+        auto it_blur = HSum.begin();
 
         for (uint32_t y = 0; y < H; ++y)
         {
@@ -132,9 +132,9 @@ namespace jimlib
         memset(PartialSum, 0, sizeof(PartialSum));
         double S = 1.0 / (R * R);
 
-        typename GenericImage<PixelSrc>::const_iterator it_d = Src.begin();
-        typename GenericImage<PixelSrc>::const_iterator it_u = Src.begin();
-        typename GenericImage<PixelDst>::iterator it_b = VSum.begin();
+        auto it_d = Src.begin();
+        auto it_u = Src.begin();
+        auto it_b = VSum.begin();
 
         for (uint32_t y = 0; y <= r; ++y)
         {
@@ -210,8 +210,8 @@ namespace jimlib
             VerticalBlur(HSum, VSum, Sizes[pass]);
         }
 
-        typename GenericImage<GenericPixel<uint16_t, GenericImage<Pixel>::Plants>>::iterator it_src = VSum.begin();
-        typename GenericImage<Pixel>::iterator it_dst = Image.begin();
+        auto it_src = VSum.begin();
+        auto it_dst = Image.begin();
         for (; it_src != VSum.end(); ++it_src, ++it_dst)
         {
             for (uint16_t p = 0; p < GenericImage<Pixel>::Plants; ++p)
