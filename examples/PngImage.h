@@ -30,9 +30,9 @@ private:
     bool AllocImageMemory(unsigned int Width, unsigned int Height, const png_structp pPng, const png_infop pInfo);
     png_byte m_ColorType;
     png_byte m_BitDepth;
-    png_bytep * m_pRows;
-    unsigned int m_RowSize;
     int m_Passes;
+    unsigned int m_RowSize;
+    png_bytep * m_pRows;
 };
 
 #endif //JIMLIB_PNGIMAGE_H
