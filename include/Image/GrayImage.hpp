@@ -39,7 +39,7 @@ namespace jimlib
         template<typename Pixel>
         void Convert(const GenericImage<Pixel> &Src, uint8_t Plant);
 
-        // TODO: Move it to somnething like ImageProcessing class
+        // TODO: Move it to something like ImageProcessing class
         void AdjustColor(double k, double b);
 
         void CopyFrom(const GrayImage &Src);

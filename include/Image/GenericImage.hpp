@@ -88,6 +88,7 @@ namespace jimlib
     class GenericImage
     {
     public:
+        typedef Pixel Type; //< Pixel type
         static const uint8_t Plants = Pixel::Plants; //< Amount of plants
         static const uint32_t SizeOfPlant = sizeof(typename Pixel::Type); //< Size of Plant in bytes
         static const uint32_t SizeOfPixel = Pixel::Plants * sizeof(typename Pixel::Type); //< Size of Pixel in bytes
@@ -255,7 +256,7 @@ namespace jimlib
              * Get value of the current Pixel[Plant].
              * \return value of the current Pixel[Plant].
              */
-            typename Pixel::Type &operator[](uint8_t Plant);
+            typename Pixel::Type &operator[](int8_t Plant);
 
             /*!
              * Check if iterators are equal.
@@ -348,7 +349,7 @@ namespace jimlib
              * Get value of the current Pixel[Plant].
              * \return value of the current Pixel[Plant].
              */
-            const typename Pixel::Type &operator[](uint8_t Plant) const;
+            const typename Pixel::Type &operator[](int8_t Plant) const;
 
             /*!
              * Check if iterators are equal.
@@ -768,7 +769,7 @@ namespace jimlib
     }
 
     template<typename Pixel>
-    typename Pixel::Type &GenericImage<Pixel>::iterator::operator[](uint8_t Plant)
+    typename Pixel::Type &GenericImage<Pixel>::iterator::operator[](int8_t Plant)
     {
         assert(Plant < Pixel::Plants);
         assert(m_RawData != nullptr);
@@ -866,7 +867,7 @@ namespace jimlib
     }
 
     template<typename Pixel>
-    const typename Pixel::Type &GenericImage<Pixel>::const_iterator::operator[](uint8_t Plant) const
+    const typename Pixel::Type &GenericImage<Pixel>::const_iterator::operator[](int8_t Plant) const
     {
         assert(Plant < Pixel::Plants);
         assert(m_RawData != nullptr);
