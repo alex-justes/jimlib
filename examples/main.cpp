@@ -5,6 +5,9 @@
 #include "Transformation/AffineTransfromation.hpp"
 #include "PngImage.h"
 
+#include "Convolution/Convolution.hpp"
+#include "EdgeDetection/Sobel.hpp"
+#include "Utils/Search.hpp"
 /*!
  *  \file
  *  \brief Simple example
@@ -18,6 +21,7 @@
 
 
 using namespace jimlib;
+
 
 int main()
 {
@@ -89,5 +93,37 @@ int main()
     AffineTable.Calculate(Gray1.GetWidth(), Gray1.GetHeight(), Affine, true);
     AffineTable.Apply<InterpolationType::NearestNeighbour>(Gray1, Gray2);
     Png.Write(Gray2, "./cballs_affine.png");
+    
+    PngImage testPng;
+    testPng.Read("./cballs.png");
+    GrayImage testGray;
+    testGray.Convert(testPng);
+    
+    Sobel<int32_t, int32_t> sobel;
+
+    sobel.Calculate(testGray);
+    const GenericImage<GenericPixel<int32_t , 1>> *magn = sobel.GetMagnitude();
+    
+    int32_t min_ = min(*magn);
+    int32_t max_ = max(*magn);
+    int32_t factor = max_ - min_;
+    printf("%d %d %d\n", min_, max_, factor);
+    auto it_src = magn->begin();
+    auto it_dst = testGray.begin();
+    for (; it_src != magn->end(); ++it_src, ++it_dst)
+    {
+        if (factor > 0)
+        {
+            int32_t p = it_src[0];
+            p -= min_;
+            it_dst[0] = (unsigned char) min(255, max(0, (255 * p) / factor));
+        }
+        else
+        {
+            it_dst[0] = (unsigned char) min(255, max(0, it_src[0]));
+        }
+    }
+    testPng.Write(testGray, "./cballs_sobel.png");
+    
     return 0;
 }
