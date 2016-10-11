@@ -65,5 +65,27 @@ namespace jimlib
         }
         return max_;
     }
+    
+    template<typename AccumulatorT, class Pixel>
+    typename Pixel::Type mean(const GenericImage<Pixel> &Src)
+    {
+        auto it = Src.begin();
+        AccumulatorT sum = 0;
+        int32_t count = 0;
+        for (; it != Src.end(); ++it)
+        {
+            for (int32_t p = 0; p < Pixel::Plants; ++p)
+            {
+                sum += it[p];
+                ++count;
+            }
+        }
+        typename Pixel::Type res = 0;
+        if (count > 0)
+        {
+            res = (typename Pixel::Type)(sum/count);
+        }
+        return res;
+    }
 };
 #endif //JIMLIB_SEARCH_HPP
