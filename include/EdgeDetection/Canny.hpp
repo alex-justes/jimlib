@@ -164,10 +164,13 @@ namespace jimlib
         auto it_dst = Dst.begin();
         for (; it_dst != Dst.end(); ++it_dst, ++it_src)
         {
-            auto search = m_Lookup.find(it_src[0]);
-            if (search != m_Lookup.end())
+            if (it_src[0] != Cluster::MaxIdx)
             {
-                it_dst[0] = 1;
+                auto search = m_Lookup.find(it_src[0]);
+                if (search != m_Lookup.end())
+                {
+                    it_dst[0] = 1;
+                }
             }
         }
     }

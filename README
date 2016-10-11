@@ -40,7 +40,7 @@ jimlib won't provide as fast, good and tested algorithms and primitives as openc
  * Lens distortion correction
  * Different convolutions
  * Haar-like features
- * Projective transormation.
+ * Projective transformation.
   
 [Current goal]
 Projective transformations, convolutions.
