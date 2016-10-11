@@ -31,6 +31,10 @@ jimlib won't provide as fast, good and tested algorithms and primitives as openc
  * 2-pass clusterization of the binary image(with nearby cluster merging)
  * Generic transformation table
  * Affine transformation
+ * Generic vertical and horizontal convolutions of size 3
+ * Sobel operator
+ * Canny edge detection algorithm
+ * Hough line transormation
 
 [Features which will be implemented soon]
  * Lens distortion correction
