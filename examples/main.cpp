@@ -8,6 +8,8 @@
 #include "Convolution/Convolution.hpp"
 #include "EdgeDetection/Sobel.hpp"
 #include "Utils/Search.hpp"
+#include "EdgeDetection/Canny.hpp"
+#include "Transformation/HoughLine.hpp"
 /*!
  *  \file
  *  \brief Simple example
@@ -35,7 +37,7 @@ int main()
     // Blur PNG image
     FastGaussianBlur::Blur<3>(Png, 4.0);
     Png.Write("./cballs_blured.png");
-
+    
     // Convert Blured PNG image to gray-level image
     GrayBlured.Convert(Png);
     GrayAdjusted.CopyFrom(GrayBlured);
@@ -74,6 +76,7 @@ int main()
 
 
     Png.Read("./cballs.png");
+    
     PngImage Png2;
     Png2.Read("./cballs.png");
     AffineTransformation Affine;
@@ -96,10 +99,12 @@ int main()
     
     PngImage testPng;
     testPng.Read("./cballs.png");
-    GrayImage testGray;
+    GrayImage testGray, testGray2;
     testGray.Convert(testPng);
+    testGray2.CopyFrom(testGray);
     
-    Sobel<int32_t, int32_t> sobel;
+    Sobel sobel;
+    
 
     sobel.Calculate(testGray);
     const GenericImage<GenericPixel<int32_t , 1>> *magn = sobel.GetMagnitude();
@@ -125,5 +130,29 @@ int main()
     }
     testPng.Write(testGray, "./cballs_sobel.png");
     
+    BinaryImage testBin;
+    //GrayImage testGray3;
+    Canny canny;
+    FastGaussianBlur::Blur<3>(testGray2, 1.3);
+    canny.Calculate(testGray2, testBin, 0, 0, 0.33, 0.33);
+    testPng.Write(testBin, "./cballs_canny.png");
+    
+    HoughLine hough;
+    hough.Calculate(testBin, -30, 30, 0.5, 0, 100, 1, 255);
+    int32_t W = hough.GetWidth();
+    int32_t H = hough.GetHeight();
+    printf("%d %d\n", W,H);
+    testGray2.Create(W,H,PixelType::Mono8(0));
+    printf("%d %d\n", testGray2.GetWidth(), testGray2.GetHeight());
+    {
+        auto it_src = hough.begin();
+        auto it_dst = testGray2.begin();
+        for (; it_src != hough.end(); ++it_src, ++it_dst)
+        {
+            it_dst[0] = it_src[0];
+        }
+    }
+    
+    testPng.Write(testGray2, "./cballs_hough.png");
     return 0;
 }
