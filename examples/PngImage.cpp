@@ -160,6 +160,14 @@ bool PngImage::Write(const std::string &FileName) const
 
 void PngImage::Convert(const jimlib::BinaryImage &Src)
 {
+    png_structp pPng = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    png_infop pInfo = png_create_info_struct(pPng);
+    int32_t W = Src.GetWidth();
+    int32_t H = Src.GetHeight();
+    png_set_IHDR(pPng, pInfo, W,H,
+                 m_BitDepth, m_ColorType, PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+    AllocImageMemory(Src.GetWidth(), Src.GetHeight(), pPng, pInfo);
     for (uint32_t y = 0; y < GetHeight(); ++y)
     {
         BinaryImage::const_iterator it_src = Src.GetColRow(0, y);
@@ -175,6 +183,14 @@ void PngImage::Convert(const jimlib::BinaryImage &Src)
 
 void PngImage::Convert(const jimlib::GrayImage &Src)
 {
+    png_structp pPng = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    png_infop pInfo = png_create_info_struct(pPng);
+    int32_t W = Src.GetWidth();
+    int32_t H = Src.GetHeight();
+    png_set_IHDR(pPng, pInfo, W,H,
+                 m_BitDepth, m_ColorType, PNG_INTERLACE_NONE,
+                 PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
+    AllocImageMemory(Src.GetWidth(), Src.GetHeight(), pPng, pInfo);
     for (uint32_t y = 0; y < GetHeight(); ++y)
     {
         GrayImage::const_iterator it_src = Src.GetColRow(0, y);
