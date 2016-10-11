@@ -41,7 +41,7 @@ namespace jimlib
     friend class Cluster;
     public:
         ClusterItem();
-
+        uint16_t Id;
         uint32_t Mass;
         uint64_t SumX;
         uint64_t SumY;
@@ -130,8 +130,10 @@ namespace jimlib
                         m_Clusters[Idx].Mass = p;
                         m_Clusters[Idx].SumX = p * x;
                         m_Clusters[Idx].SumY = p * y;
+                        m_Clusters[Idx].Id = Idx;
                         ++m_ClustersAmount;
                     }
+                    it[0] = Idx;
                 }
             }
         }
