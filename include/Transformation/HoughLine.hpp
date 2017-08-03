@@ -80,9 +80,12 @@ namespace jimlib
         if (norm > 0)
         {
             int32_t max_ = max(*this);
-            for (auto it = this->begin(); it != this->end(); ++it)
+            if (max_ > 0)
             {
-                it[0] = (norm*it[0]/max_);
+                for (auto it = this->begin(); it != this->end(); ++it)
+                {
+                    it[0] = (norm * it[0] / max_);
+                }
             }
         }
     }

@@ -27,6 +27,7 @@
 #define JIMLIB_CLUSTER_HPP
 
 #include <memory>
+#include <list>
 #include "Image/PixelTypes.hpp"
 #include "Image/BinaryImage.hpp"
 #include "Utils/MinMax.hpp"
@@ -53,6 +54,7 @@ namespace jimlib
         void CalculateCenter();
     private:
         bool m_Used;
+        uint32_t m_Parent;
     };
 
     class Cluster : public GenericImage<PixelType::Mono16>
@@ -238,8 +240,7 @@ namespace jimlib
         {
             m_Clusters[i].m_Used = false;
         }
-        Graph Net;
-        Net.Allocate(m_ClustersAmount);
+        std::list<std::pair<uint32_t,uint32_t>> pairs;
         for (uint32_t i = 0; i < m_ClustersAmount; ++i)
         {
             if (!m_Clusters[i].m_Used)
@@ -251,31 +252,45 @@ namespace jimlib
                     double D = sqrt(Dy*Dy + Dx*Dx);
                     if (D < Distance)
                     {
-                        Net.AddChild(i, j);
+                        pairs.push_back(std::make_pair(i,j));
                     }
                 }
             }
         }
-        auto Mark = [](uint16_t Node, void * pData)
+        
+        for (const auto &p : pairs)
         {
-            NetWalkData * pNetWalkData = reinterpret_cast<NetWalkData *>(pData);
-            ClusterItem * pClusters = pNetWalkData->pClusters;
-            uint16_t Parent = pNetWalkData->Parent;
-            pClusters[Parent].SumX += pClusters[Node].SumX;
-            pClusters[Parent].SumY += pClusters[Node].SumY;
-            pClusters[Parent].Mass += pClusters[Node].Mass;
-            pClusters[Node].m_Used = true;
-        };
-        NetWalkData Data;
-        Data.pClusters = m_Clusters;
+            // Always merge with first
+            bool usedBoth = m_Clusters[p.first].m_Used && m_Clusters[p.second].m_Used;
+            if (usedBoth)
+            {
+                continue;
+            }
+            uint32_t parent = p.first;
+            uint32_t node   = p.second;
+            bool usedAny = m_Clusters[p.first].m_Used || m_Clusters[p.second].m_Used;
+            if (usedAny)
+            {
+                parent = m_Clusters[p.first].m_Used ? m_Clusters[p.first].m_Parent : m_Clusters[p.second].m_Parent;
+                node   = m_Clusters[p.first].m_Used ? p.second : p.first;
+            }
+            m_Clusters[parent].SumX += m_Clusters[node].SumX;
+            m_Clusters[parent].SumY += m_Clusters[node].SumY;
+            m_Clusters[parent].Mass += m_Clusters[node].Mass;
+            m_Clusters[p.first].m_Used    = true;
+            m_Clusters[p.first].m_Parent  = parent;
+            m_Clusters[p.second].m_Used   = true;
+            m_Clusters[p.second].m_Parent = parent;
+        }
+        for (uint32_t idx = 0; idx < m_ClustersAmount; ++idx)
+        {
+            m_Clusters[m_Clusters[idx].m_Parent].m_Used = false;
+        }
         uint16_t RealClusters = 0;
         for (uint32_t i = 0; i < m_ClustersAmount; ++i)
         {
             if (!m_Clusters[i].m_Used)
             {
-                Data.Parent = i;
-                Net.DFS(i, &Data, Mark);
-                m_Clusters[i].m_Used = true;
                 m_Clusters[RealClusters].SumX = m_Clusters[i].SumX;
                 m_Clusters[RealClusters].SumY = m_Clusters[i].SumY;
                 m_Clusters[RealClusters].Mass = m_Clusters[i].Mass;

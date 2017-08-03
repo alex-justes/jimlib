@@ -113,14 +113,14 @@ namespace jimlib
                 }
                 const GenericImage<GenericPixel<int32_t , 1>>::const_iterator *r1 = rows[ind[1] + 1];
                 const GenericImage<GenericPixel<int32_t , 1>>::const_iterator *r2 = rows[ind[3] + 1];
-                if (it_m2[0] <= (*r1)[ind[0]] || it_m2[0] <= (*r2)[ind[2]])
+                if (it_m2[0] < (*r1)[ind[0]] || it_m2[0] < (*r2)[ind[2]])
                 {
                     it_dst[0] = 0;
-                }
-                else if (it_m2[0] == (*r1)[ind[0]] && it_m2[0] == (*r2)[ind[2]] && it_m2[0] > T2)
+                }/*
+                else if ((it_m2[0] == (*r1)[ind[0]] || it_m2[0] == (*r2)[ind[2]]) && it_m2[0] > T2)
                 {
                     it_dst[0] = 1;
-                }
+                }*/
                 else if (it_m2[0] > T1)
                 {
                     it_dst[0] = 1;
