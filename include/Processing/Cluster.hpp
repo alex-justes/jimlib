@@ -31,7 +31,7 @@
 #include "Image/PixelTypes.hpp"
 #include "Image/BinaryImage.hpp"
 #include "Utils/MinMax.hpp"
-#include "Utils/Graph.hpp"
+#include "Utils/Rect.hpp"
 
 namespace jimlib
 {
@@ -50,7 +50,9 @@ namespace jimlib
         uint32_t Cy;
         double fCx;
         double fCy;
-
+        
+        Rect<uint32_t> roi;
+        
         void CalculateCenter();
     private:
         bool m_Used;
@@ -64,9 +66,9 @@ namespace jimlib
         static const uint32_t MaxClusters = UINT16_MAX;
 
         template<typename Pixel>
-        uint16_t ClusterizeMask(const GenericImage<Pixel> &Image, const BinaryImage &Mask);
+        uint16_t ClusterizeMask(const GenericImage<Pixel> &Image, const BinaryImage &Mask, bool CalculateRoi = false);
 
-        uint16_t Clusterize(const BinaryImage &Image);
+        uint16_t Clusterize(const BinaryImage &Image, bool CalculateRoi = false);
 
         uint16_t GetClustersAmount() const;
 
@@ -83,7 +85,7 @@ namespace jimlib
         void ClusterizeInternal(const BinaryImage &Image);
 
         template<typename Pixel>
-        uint16_t ExtractClustersInternal(const GenericImage<Pixel> &Image);
+        uint16_t ExtractClustersInternal(const GenericImage<Pixel> &Image, bool CalculateRoi);
 
         ClusterItem m_Clusters[UINT16_MAX];
         uint16_t m_ClustersAmount;
@@ -94,15 +96,15 @@ namespace jimlib
 // =======================================================
 
     template<typename Pixel>
-    uint16_t Cluster::ClusterizeMask(const GenericImage<Pixel> &Image, const BinaryImage &Mask)
+    uint16_t Cluster::ClusterizeMask(const GenericImage<Pixel> &Image, const BinaryImage &Mask, bool CalculateRoi)
     {
         static_assert(GenericImage<Pixel>::Plants == 1, "Only Images with 1 plant are allowed!");
         ClusterizeInternal(Mask);
-        return ExtractClustersInternal(Image);
+        return ExtractClustersInternal(Image, CalculateRoi);
     }
 
     template<typename Pixel>
-    uint16_t Cluster::ExtractClustersInternal(const GenericImage<Pixel> &Image)
+    uint16_t Cluster::ExtractClustersInternal(const GenericImage<Pixel> &Image, bool CalculateRoi)
     {
         static_assert(GenericImage<Pixel>::Plants == 1, "Only Images with 1 plant are allowed!");
         typename GenericImage<Pixel>::const_iterator it_mass = Image.begin();
@@ -122,6 +124,13 @@ namespace jimlib
                         m_Clusters[Idx].Mass += p;
                         m_Clusters[Idx].SumX += p * x;
                         m_Clusters[Idx].SumY += p * y;
+                        if (CalculateRoi)
+                        {
+                            m_Clusters[Idx].roi.top = min(m_Clusters[Idx].roi.top, y);
+                            m_Clusters[Idx].roi.bottom = max(m_Clusters[Idx].roi.bottom, y);
+                            m_Clusters[Idx].roi.left = min(m_Clusters[Idx].roi.left, x);
+                            m_Clusters[Idx].roi.right = max(m_Clusters[Idx].roi.right, x);
+                        }
                     }
                     else
                     {
@@ -133,6 +142,10 @@ namespace jimlib
                         m_Clusters[Idx].SumX = p * x;
                         m_Clusters[Idx].SumY = p * y;
                         m_Clusters[Idx].Id = Idx;
+                        m_Clusters[Idx].roi.top = y;
+                        m_Clusters[Idx].roi.bottom = y;
+                        m_Clusters[Idx].roi.left = x;
+                        m_Clusters[Idx].roi.right = x;
                         ++m_ClustersAmount;
                     }
                     it[0] = Idx;
@@ -165,10 +178,10 @@ namespace jimlib
         }
     }
 
-    inline uint16_t Cluster::Clusterize(const BinaryImage &Image)
+    inline uint16_t Cluster::Clusterize(const BinaryImage &Image, bool CalculateRoi)
     {
         ClusterizeInternal(Image);
-        return ExtractClustersInternal(Image);
+        return ExtractClustersInternal(Image, CalculateRoi);
     }
     inline uint16_t Cluster::GetClustersAmount() const
     {
@@ -277,6 +290,12 @@ namespace jimlib
             m_Clusters[parent].SumX += m_Clusters[node].SumX;
             m_Clusters[parent].SumY += m_Clusters[node].SumY;
             m_Clusters[parent].Mass += m_Clusters[node].Mass;
+    
+            m_Clusters[parent].roi.top = min(m_Clusters[parent].roi.top, m_Clusters[node].roi.top);
+            m_Clusters[parent].roi.bottom = max(m_Clusters[parent].roi.bottom, m_Clusters[node].roi.bottom);
+            m_Clusters[parent].roi.left = min(m_Clusters[parent].roi.left, m_Clusters[node].roi.left);
+            m_Clusters[parent].roi.right = max(m_Clusters[parent].roi.right, m_Clusters[node].roi.right);
+            
             m_Clusters[p.first].m_Used    = true;
             m_Clusters[p.first].m_Parent  = parent;
             m_Clusters[p.second].m_Used   = true;
